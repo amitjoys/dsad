@@ -1,0 +1,128 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Category {
+  createdAt     DateTime      @default(now())
+  description   String?
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  subcategories Subcategory[]
+  tools         Tool[]
+  updatedAt     DateTime      @updatedAt
+}
+
+model Rating {
+  createdAt DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  review    Review?  @relation(fields: [reviewId], references: [id])
+  reviewId  String?  @db.ObjectId
+  score     Int?
+  tool      Tool?    @relation(fields: [toolId], references: [id])
+  toolId    String?  @db.ObjectId
+  updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?  @db.ObjectId
+}
+
+model Subcategory {
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?   @db.ObjectId
+  createdAt   DateTime  @default(now())
+  description String?
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  tools       Tool[]
+  updatedAt   DateTime  @updatedAt
+}
+
+model Billing {
+  amount        Float?
+  createdAt     DateTime           @default(now())
+  endDate       DateTime?
+  id            String             @id @default(auto()) @map("_id") @db.ObjectId
+  paymentMethod String?
+  plan          String?
+  startDate     DateTime?
+  status        EnumBillingStatus?
+  team          Team?              @relation(fields: [teamId], references: [id])
+  teamId        String?            @db.ObjectId
+  transactionId String?
+  updatedAt     DateTime           @updatedAt
+}
+
+model Review {
+  body       String?
+  createdAt  DateTime  @default(now())
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  published  Boolean?
+  ratings    Rating[]
+  reviewDate DateTime?
+  title      String?
+  tool       Tool?     @relation(fields: [toolId], references: [id])
+  toolId     String?   @db.ObjectId
+  updatedAt  DateTime  @updatedAt
+  user       User?     @relation(fields: [userId], references: [id])
+  userId     String?   @db.ObjectId
+}
+
+model Tool {
+  category       Category?       @relation(fields: [categoryId], references: [id])
+  categoryId     String?         @db.ObjectId
+  createdAt      DateTime        @default(now())
+  createdBy      String?
+  csvUploadFile  Json?
+  description    String?
+  features       String?
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  isFeatured     Boolean?
+  logo           Json?
+  name           String?
+  pricingDetails String?
+  ratings        Rating[]
+  reviews        Review[]
+  status         EnumToolStatus?
+  subcategory    Subcategory?    @relation(fields: [subcategoryId], references: [id])
+  subcategoryId  String?         @db.ObjectId
+  updatedAt      DateTime        @updatedAt
+  website        String?
+}
+
+model Team {
+  billings    Billing[]
+  createdAt   DateTime  @default(now())
+  description String?
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?
+  updatedAt   DateTime  @updatedAt
+  users       User[]
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  lastName  String?
+  password  String
+  ratings   Rating[]
+  reviews   Review[]
+  roles     Json
+  team      Team?    @relation(fields: [teamId], references: [id])
+  teamId    String?  @db.ObjectId
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumBillingStatus {
+  Option1
+}
+
+enum EnumToolStatus {
+  Option1
+}
