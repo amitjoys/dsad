@@ -210,6 +210,200 @@ class TestConstructPuneAPI(unittest.TestCase):
         self.assertGreaterEqual(response.status_code, 400)
         self.assertIn("detail", response.json())
 
+    def test_09_project_creation(self):
+        """Test project creation endpoint"""
+        print("\n=== Testing Project Creation Endpoint ===")
+        
+        # Sample project data
+        payload = {
+            "name": "Modern Villa in Koregaon Park",
+            "description": "A luxurious 4BHK villa with swimming pool and garden",
+            "image_url": "https://example.com/images/villa.jpg",
+            "category": "residential"
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/projects", 
+            json=payload
+        )
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.json()}")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("message", response.json())
+        self.assertIn("id", response.json())
+        self.assertIn("created successfully", response.json()["message"].lower())
+        
+        # Verify the project was added by checking the projects list
+        get_response = requests.get(f"{API_BASE_URL}/projects")
+        self.assertEqual(get_response.status_code, 200)
+        projects = get_response.json()
+        self.assertGreater(len(projects), 0)
+        
+        # Find our project in the list
+        found = False
+        for project in projects:
+            if project.get("name") == payload["name"]:
+                found = True
+                self.assertEqual(project["description"], payload["description"])
+                self.assertEqual(project["image_url"], payload["image_url"])
+                self.assertEqual(project["category"], payload["category"])
+                break
+        
+        self.assertTrue(found, "Created project not found in projects list")
+
+    def test_10_auth_register(self):
+        """Test user registration endpoint"""
+        print("\n=== Testing User Registration Endpoint ===")
+        
+        # Generate a unique email to avoid conflicts with existing users
+        import uuid
+        unique_id = str(uuid.uuid4())[:8]
+        
+        # Sample user registration data
+        payload = {
+            "email": f"test.user.{unique_id}@example.com",
+            "password": "SecurePassword123!",
+            "name": "Test User",
+            "phone": "+91 9876543210"
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/auth/register", 
+            json=payload
+        )
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.json()}")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("message", response.json())
+        self.assertIn("id", response.json())
+        self.assertIn("registered successfully", response.json()["message"].lower())
+        
+        # Test duplicate registration (should fail)
+        print("\n--- Testing duplicate registration ---")
+        response = requests.post(
+            f"{API_BASE_URL}/auth/register", 
+            json=payload
+        )
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.json()}")
+        
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("detail", response.json())
+        self.assertIn("already registered", response.json()["detail"].lower())
+        
+        # Save email and password for login test
+        self.test_user_email = payload["email"]
+        self.test_user_password = payload["password"]
+
+    def test_11_auth_login(self):
+        """Test user login endpoint"""
+        print("\n=== Testing User Login Endpoint ===")
+        
+        # Check if we have test user credentials from registration test
+        if not hasattr(self, 'test_user_email') or not hasattr(self, 'test_user_password'):
+            # Create a test user if not already created
+            import uuid
+            unique_id = str(uuid.uuid4())[:8]
+            
+            user_payload = {
+                "email": f"login.test.{unique_id}@example.com",
+                "password": "SecurePassword123!",
+                "name": "Login Test User",
+                "phone": "+91 9876543210"
+            }
+            
+            register_response = requests.post(
+                f"{API_BASE_URL}/auth/register", 
+                json=user_payload
+            )
+            print(f"Created test user for login test: {register_response.status_code}")
+            
+            self.test_user_email = user_payload["email"]
+            self.test_user_password = user_payload["password"]
+        
+        # Test login with valid credentials
+        login_data = {
+            "username": self.test_user_email,
+            "password": self.test_user_password
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/auth/login", 
+            data=login_data  # Note: login endpoint expects form data, not JSON
+        )
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.json()}")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("access_token", response.json())
+        self.assertIn("token_type", response.json())
+        self.assertEqual(response.json()["token_type"], "bearer")
+        
+        # Save token for user info test
+        self.access_token = response.json()["access_token"]
+        
+        # Test login with invalid credentials
+        print("\n--- Testing login with invalid credentials ---")
+        invalid_login = {
+            "username": self.test_user_email,
+            "password": "WrongPassword123!"
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/auth/login", 
+            data=invalid_login
+        )
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.json()}")
+        
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("detail", response.json())
+
+    def test_12_auth_me(self):
+        """Test get current user info endpoint"""
+        print("\n=== Testing Get Current User Info Endpoint ===")
+        
+        # Check if we have an access token from login test
+        if not hasattr(self, 'access_token'):
+            print("No access token available. Running login test first.")
+            self.test_11_auth_login()
+        
+        # Test with valid token
+        headers = {
+            "Authorization": f"Bearer {self.access_token}"
+        }
+        
+        response = requests.get(
+            f"{API_BASE_URL}/auth/me", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.json()}")
+        
+        self.assertEqual(response.status_code, 200)
+        user_info = response.json()
+        self.assertIn("email", user_info)
+        self.assertIn("name", user_info)
+        self.assertEqual(user_info["email"], self.test_user_email)
+        
+        # Test with invalid token
+        print("\n--- Testing with invalid token ---")
+        invalid_headers = {
+            "Authorization": "Bearer invalid_token_here"
+        }
+        
+        response = requests.get(
+            f"{API_BASE_URL}/auth/me", 
+            headers=invalid_headers
+        )
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.json()}")
+        
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("detail", response.json())
+
 
 if __name__ == "__main__":
     unittest.main()
