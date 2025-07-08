@@ -1,0 +1,18 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://constructpune.in/sitemap.xml
+
+# Disallow admin paths
+Disallow: /admin/
+Disallow: /api/
+
+# Allow important pages
+Allow: /
+Allow: /services
+Allow: /gallery
+Allow: /about
+Allow: /contact
+Allow: /calculator
