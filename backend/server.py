@@ -16,6 +16,8 @@ import requests
 from bs4 import BeautifulSoup
 import asyncio
 import httpx
+import json
+import re
 
 load_dotenv()
 
