@@ -1,0 +1,266 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: #1f2937;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-primary-600 font-semibold py-3 px-6 rounded-lg border-2 border-primary-600 transition-colors duration-200;
+  }
+  
+  .btn-accent {
+    @apply bg-accent-600 hover:bg-accent-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden;
+  }
+  
+  .section-padding {
+    @apply py-16 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
+  }
+  
+  .hero-gradient {
+    @apply bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600;
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-sm bg-white/90 border border-white/20;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+  
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  @apply inline-block w-6 h-6 border-4 border-current border-t-transparent rounded-full animate-spin;
+}
+
+/* Form styles */
+.form-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+}
+
+.form-textarea {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 resize-none;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.form-error {
+  @apply text-red-600 text-sm mt-1;
+}
+
+/* Navigation styles */
+.nav-link {
+  @apply text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200;
+}
+
+.nav-link-active {
+  @apply bg-primary-100 text-primary-600 px-3 py-2 rounded-md text-sm font-medium;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transform hover:scale-105 transition-transform duration-300;
+}
+
+/* Responsive text sizes */
+.text-responsive-xl {
+  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl;
+}
+
+.text-responsive-lg {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+.text-responsive-md {
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+}
+
+/* Calculator specific styles */
+.calculator-card {
+  @apply bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300;
+}
+
+.calculator-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white;
+}
+
+.calculator-select {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white appearance-none;
+}
+
+.calculator-result {
+  @apply bg-gradient-to-r from-primary-50 to-accent-50 border border-primary-200 rounded-lg p-4;
+}
+
+.cost-breakdown {
+  @apply bg-white rounded-lg p-4 shadow-sm border border-gray-200;
+}
+
+.cost-item {
+  @apply flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0;
+}
+
+.cost-total {
+  @apply font-bold text-lg text-primary-600 bg-primary-50 px-4 py-2 rounded-lg;
+}
+
+/* Testimonial styles */
+.testimonial-card {
+  @apply bg-white rounded-xl shadow-lg p-8 border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105;
+}
+
+.testimonial-quote {
+  @apply text-gray-600 italic leading-relaxed mb-4;
+}
+
+.testimonial-author {
+  @apply font-semibold text-gray-800;
+}
+
+.testimonial-role {
+  @apply text-primary-600 text-sm;
+}
+
+/* Project gallery styles */
+.project-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
+}
+
+.project-card {
+  @apply bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300;
+}
+
+.project-image {
+  @apply w-full h-64 object-cover;
+}
+
+.project-overlay {
+  @apply absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300;
+}
+
+.project-overlay-text {
+  @apply text-white text-center p-4;
+}
+
+/* Service card styles */
+.service-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
+}
+
+.service-card {
+  @apply bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105;
+}
+
+.service-icon {
+  @apply w-16 h-16 text-primary-600 mb-4;
+}
+
+.service-title {
+  @apply text-2xl font-bold text-gray-800 mb-3;
+}
+
+.service-description {
+  @apply text-gray-600 leading-relaxed mb-6;
+}
+
+.service-price {
+  @apply text-primary-600 font-bold text-lg;
+}
+
+/* Statistics styles */
+.stat-item {
+  @apply text-center;
+}
+
+.stat-number {
+  @apply text-4xl font-bold text-primary-600 mb-2;
+}
+
+.stat-label {
+  @apply text-gray-600 text-sm uppercase tracking-wide;
+}
+
+/* Mobile responsive utilities */
+@media (max-width: 640px) {
+  .mobile-padding {
+    @apply px-4 py-8;
+  }
+  
+  .mobile-text-center {
+    @apply text-center;
+  }
+  
+  .mobile-full-width {
+    @apply w-full;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-full-width {
+    width: 100% !important;
+  }
+}
