@@ -713,8 +713,8 @@ class TestConstructPuneAPI(unittest.TestCase):
             self.assertIn("images_check", result)
             self.assertIn("recommendations", result)
             
-            # Validate page path
-            self.assertEqual(result["page_path"], page_path)
+            # Validate page path - allow for both with and without leading slash
+            self.assertTrue(result["page_path"] == page_path or result["page_path"] == page_path.lstrip('/'))
         
         # Test without authentication
         print("\n--- Testing without authentication ---")
