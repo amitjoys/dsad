@@ -101,6 +101,50 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class AdminUser(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: str
+    name: str
+    is_admin: bool = True
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.now)
+
+class AdminUserCreate(BaseModel):
+    email: str
+    password: str
+    name: str
+
+class SEOData(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    page_path: str
+    title: str
+    description: str
+    keywords: List[str]
+    meta_tags: dict
+    schema_markup: Optional[dict] = None
+    content_optimization: Optional[dict] = None
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
+
+class SEOOptimizationRequest(BaseModel):
+    page_path: str
+    content: str
+    target_keywords: List[str]
+
+class ServicePage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    slug: str
+    title: str
+    description: str
+    content: str
+    features: List[str]
+    pricing_info: dict
+    images: List[str]
+    seo_data: Optional[dict] = None
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
+
 # Authentication functions
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
