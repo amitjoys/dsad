@@ -308,7 +308,15 @@ test_plan:
     - "SEO Optimization Endpoints"
     - "Service Pages Management"
     - "Admin Dashboard"
-  stuck_tasks: []
+    - "Frontend Integration"
+    - "Responsive Design"
+    - "Mobile Navigation Menu"
+    - "Calculator Functionality"
+    - "Contact Form Functionality"
+    - "Service Pages"
+    - "Gallery Page"
+  stuck_tasks: 
+    - "Calculator Functionality"
   test_all: true
   test_priority: "high_first"
 
