@@ -44,19 +44,22 @@ const Calculator = () => {
       value: 'standard', 
       label: 'Standard Quality', 
       description: 'Good quality materials with standard finishes',
-      multiplier: '1.0x'
+      multiplier: '1.0x',
+      color: 'bg-blue-50 border-blue-200'
     },
     { 
       value: 'premium', 
       label: 'Premium Quality', 
       description: 'High-quality materials with premium finishes',
-      multiplier: '1.4x'
+      multiplier: '1.4x',
+      color: 'bg-purple-50 border-purple-200'
     },
     { 
       value: 'luxury', 
       label: 'Luxury Quality', 
       description: 'Ultra-premium materials with luxury finishes',
-      multiplier: '1.8x'
+      multiplier: '1.8x',
+      color: 'bg-yellow-50 border-yellow-200'
     }
   ];
 
@@ -79,6 +82,7 @@ const Calculator = () => {
       setLocations(locationsRes.data);
     } catch (err) {
       console.error('Error fetching options:', err);
+      setError('Failed to load calculator options. Please refresh the page.');
     }
   };
 
@@ -88,6 +92,8 @@ const Calculator = () => {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const handleCheckboxChange = (e, field) => {
@@ -100,8 +106,29 @@ const Calculator = () => {
     }));
   };
 
+  const validateForm = () => {
+    if (!formData.area || parseFloat(formData.area) <= 0) {
+      setError('Please enter a valid area greater than 0.');
+      return false;
+    }
+    if (formData.materials.length === 0) {
+      setError('Please select at least one material.');
+      return false;
+    }
+    if (formData.labor_types.length === 0) {
+      setError('Please select at least one labor type.');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -114,6 +141,10 @@ const Calculator = () => {
       });
 
       setResult(response.data);
+      // Scroll to results section
+      setTimeout(() => {
+        document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error calculating costs. Please try again.');
     } finally {
@@ -153,13 +184,13 @@ const Calculator = () => {
     <div className="Calculator min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-        <div className="container-custom py-8">
+        <div className="container-custom section-padding-sm">
           <div className="text-center">
-            <CalculatorIcon className="h-16 w-16 mx-auto text-primary-600 mb-4" />
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            <CalculatorIcon className="h-12 w-12 md:h-16 md:w-16 mx-auto text-primary-600 mb-4" />
+            <h1 className="heading-lg mb-4">
               Construction Cost Calculator
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="body-lg text-gray-600 max-w-4xl mx-auto">
               Get accurate construction cost estimates with real-time material prices and labor costs. 
               Our calculator uses live data to provide precise estimates for your project.
             </p>
@@ -167,12 +198,12 @@ const Calculator = () => {
         </div>
       </div>
 
-      <div className="container-custom py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="container-custom section-padding">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12">
           {/* Calculator Form */}
           <div className="calculator-card">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-              <BuildingOfficeIcon className="h-6 w-6 mr-2 text-primary-600" />
+            <h2 className="heading-md mb-6 flex items-center">
+              <BuildingOfficeIcon className="h-6 w-6 mr-3 text-primary-600" />
               Project Details
             </h2>
 
@@ -180,19 +211,19 @@ const Calculator = () => {
               {/* Project Type */}
               <div>
                 <label className="form-label">Project Type</label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {projectTypes.map(type => (
-                    <label key={type.value} className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <label key={type.value} className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 hover:border-primary-300 transition-all duration-200">
                       <input
                         type="radio"
                         name="project_type"
                         value={type.value}
                         checked={formData.project_type === type.value}
                         onChange={handleInputChange}
-                        className="mr-3"
+                        className="mr-3 text-primary-600 focus:ring-primary-500"
                       />
                       <span className="text-lg mr-2">{type.icon}</span>
-                      <span className="text-sm font-medium">{type.label}</span>
+                      <span className="text-sm font-medium text-gray-700">{type.label}</span>
                     </label>
                   ))}
                 </div>
@@ -201,17 +232,24 @@ const Calculator = () => {
               {/* Area */}
               <div>
                 <label className="form-label">Area (Square Feet)</label>
-                <input
-                  type="number"
-                  name="area"
-                  value={formData.area}
-                  onChange={handleInputChange}
-                  className="calculator-input"
-                  placeholder="Enter area in sq ft"
-                  required
-                  min="100"
-                  max="50000"
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    name="area"
+                    value={formData.area}
+                    onChange={handleInputChange}
+                    className="calculator-input pr-12"
+                    placeholder="Enter area in sq ft"
+                    required
+                    min="100"
+                    max="50000"
+                    step="1"
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <span className="text-gray-500 text-sm">sq ft</span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Minimum: 100 sq ft, Maximum: 50,000 sq ft</p>
               </div>
 
               {/* Location */}
@@ -222,7 +260,7 @@ const Calculator = () => {
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
-                    className="calculator-select"
+                    className="calculator-select pr-10"
                     required
                   >
                     {locations.map(location => (
@@ -238,39 +276,41 @@ const Calculator = () => {
               {/* Materials */}
               <div>
                 <label className="form-label">Materials Required</label>
-                <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
                   {availableMaterials.map(material => (
-                    <label key={material} className="flex items-center p-2 border rounded hover:bg-gray-50">
+                    <label key={material} className="flex items-center p-2 rounded hover:bg-gray-50 transition-colors duration-200">
                       <input
                         type="checkbox"
                         value={material}
                         checked={formData.materials.includes(material)}
                         onChange={(e) => handleCheckboxChange(e, 'materials')}
-                        className="mr-2"
+                        className="mr-3 text-primary-600 focus:ring-primary-500 rounded"
                       />
-                      <span className="text-sm capitalize">{material}</span>
+                      <span className="text-sm capitalize text-gray-700">{material}</span>
                     </label>
                   ))}
                 </div>
+                <p className="text-xs text-gray-500 mt-1">Select all materials you'll need for your project</p>
               </div>
 
               {/* Labor Types */}
               <div>
                 <label className="form-label">Labor Types Required</label>
-                <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
                   {availableLaborTypes.map(labor => (
-                    <label key={labor} className="flex items-center p-2 border rounded hover:bg-gray-50">
+                    <label key={labor} className="flex items-center p-2 rounded hover:bg-gray-50 transition-colors duration-200">
                       <input
                         type="checkbox"
                         value={labor}
                         checked={formData.labor_types.includes(labor)}
                         onChange={(e) => handleCheckboxChange(e, 'labor_types')}
-                        className="mr-2"
+                        className="mr-3 text-primary-600 focus:ring-primary-500 rounded"
                       />
-                      <span className="text-sm capitalize">{labor.replace('_', ' ')}</span>
+                      <span className="text-sm capitalize text-gray-700">{labor.replace('_', ' ')}</span>
                     </label>
                   ))}
                 </div>
+                <p className="text-xs text-gray-500 mt-1">Select all labor types required for your project</p>
               </div>
 
               {/* Quality Level */}
@@ -278,19 +318,23 @@ const Calculator = () => {
                 <label className="form-label">Quality Level</label>
                 <div className="space-y-3">
                   {qualityLevels.map(level => (
-                    <label key={level.value} className="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                    <label key={level.value} className={`flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      formData.quality_level === level.value 
+                        ? `${level.color} border-current` 
+                        : 'bg-white border-gray-200 hover:border-gray-300'
+                    }`}>
                       <input
                         type="radio"
                         name="quality_level"
                         value={level.value}
                         checked={formData.quality_level === level.value}
                         onChange={handleInputChange}
-                        className="mt-1 mr-3"
+                        className="mt-1 mr-3 text-primary-600 focus:ring-primary-500"
                       />
-                      <div>
-                        <div className="font-medium text-gray-800">{level.label}</div>
-                        <div className="text-sm text-gray-600">{level.description}</div>
-                        <div className="text-xs text-primary-600 font-medium">Cost multiplier: {level.multiplier}</div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-800 mb-1">{level.label}</div>
+                        <div className="text-sm text-gray-600 mb-2">{level.description}</div>
+                        <div className="text-xs text-primary-700 font-semibold">Cost multiplier: {level.multiplier}</div>
                       </div>
                     </label>
                   ))}
@@ -300,11 +344,11 @@ const Calculator = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full py-4 text-lg"
+                className="btn-primary w-full py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
-                    <div className="loading-spinner mr-2"></div>
+                    <div className="loading-spinner mr-3"></div>
                     Calculating...
                   </div>
                 ) : (
@@ -317,25 +361,28 @@ const Calculator = () => {
             </form>
 
             {error && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-600">{error}</p>
+              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start">
+                  <InformationCircleIcon className="h-5 w-5 text-red-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
               </div>
             )}
           </div>
 
           {/* Results */}
-          <div className="space-y-6">
+          <div id="results-section" className="space-y-6">
             {result ? (
               <>
                 {/* Total Cost */}
                 <div className="calculator-result">
                   <div className="text-center">
                     <CurrencyRupeeIcon className="h-12 w-12 mx-auto text-primary-600 mb-4" />
-                    <h3 className="text-2xl font-bold text-gray-800 mb-2">Total Estimated Cost</h3>
-                    <div className="text-4xl font-bold text-primary-600 mb-2">
+                    <h3 className="heading-md mb-4">Total Estimated Cost</h3>
+                    <div className="text-4xl lg:text-5xl font-bold text-primary-700 mb-4">
                       {formatCurrency(result.total_cost)}
                     </div>
-                    <p className="text-gray-600">
+                    <p className="body-sm text-gray-600">
                       For {formData.area} sq ft {formData.project_type} in {formData.location}
                     </p>
                   </div>
@@ -343,30 +390,30 @@ const Calculator = () => {
 
                 {/* Cost Breakdown */}
                 <div className="cost-breakdown">
-                  <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                  <h4 className="heading-sm mb-4 flex items-center">
                     <ChartBarIcon className="h-5 w-5 mr-2" />
                     Cost Breakdown
                   </h4>
 
                   <div className="space-y-3">
                     <div className="cost-item">
-                      <span>Materials Cost</span>
+                      <span className="font-medium">Materials Cost</span>
                       <span className="font-semibold">{formatCurrency(result.breakdown.materials_subtotal)}</span>
                     </div>
                     <div className="cost-item">
-                      <span>Labor Cost</span>
+                      <span className="font-medium">Labor Cost</span>
                       <span className="font-semibold">{formatCurrency(result.breakdown.labor_subtotal)}</span>
                     </div>
                     <div className="cost-item">
-                      <span>Quality Level ({result.breakdown.quality_level})</span>
+                      <span className="font-medium">Quality Level ({result.breakdown.quality_level})</span>
                       <span className="font-semibold">{result.breakdown.quality_multiplier}x</span>
                     </div>
                     <div className="cost-item">
-                      <span>Overhead & Profit</span>
+                      <span className="font-medium">Overhead & Profit</span>
                       <span className="font-semibold">{formatCurrency(result.breakdown.overhead_profit)}</span>
                     </div>
-                    <div className="cost-item border-t-2 border-primary-200 pt-2">
-                      <span className="font-bold">Total Cost</span>
+                    <div className="cost-item border-t-2 border-primary-200 pt-3">
+                      <span className="font-bold text-lg">Total Cost</span>
                       <span className="cost-total">{formatCurrency(result.total_cost)}</span>
                     </div>
                   </div>
@@ -374,11 +421,11 @@ const Calculator = () => {
 
                 {/* Material Costs */}
                 <div className="cost-breakdown">
-                  <h4 className="text-lg font-bold text-gray-800 mb-4">Material Costs</h4>
+                  <h4 className="heading-sm mb-4">Material Costs</h4>
                   <div className="space-y-2">
                     {Object.entries(result.material_costs).map(([material, cost]) => (
                       <div key={material} className="cost-item">
-                        <span className="capitalize">{material}</span>
+                        <span className="capitalize font-medium">{material}</span>
                         <span className="font-semibold">{formatCurrency(cost.total_cost)}</span>
                       </div>
                     ))}
@@ -387,11 +434,11 @@ const Calculator = () => {
 
                 {/* Labor Costs */}
                 <div className="cost-breakdown">
-                  <h4 className="text-lg font-bold text-gray-800 mb-4">Labor Costs</h4>
+                  <h4 className="heading-sm mb-4">Labor Costs</h4>
                   <div className="space-y-2">
                     {Object.entries(result.labor_costs).map(([labor, cost]) => (
                       <div key={labor} className="cost-item">
-                        <span className="capitalize">{labor.replace('_', ' ')}</span>
+                        <span className="capitalize font-medium">{labor.replace('_', ' ')}</span>
                         <span className="font-semibold">{formatCurrency(cost.total_cost)}</span>
                       </div>
                     ))}
@@ -402,14 +449,14 @@ const Calculator = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={printResult}
-                    className="btn-secondary flex items-center justify-center"
+                    className="btn-secondary flex items-center justify-center no-print"
                   >
                     <PrinterIcon className="h-5 w-5 mr-2" />
                     Print Result
                   </button>
                   <button
                     onClick={shareResult}
-                    className="btn-secondary flex items-center justify-center"
+                    className="btn-secondary flex items-center justify-center no-print"
                   >
                     <ShareIcon className="h-5 w-5 mr-2" />
                     Share Result
@@ -417,12 +464,12 @@ const Calculator = () => {
                 </div>
 
                 {/* Disclaimer */}
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
                   <div className="flex items-start">
-                    <InformationCircleIcon className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
+                    <InformationCircleIcon className="h-5 w-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0" />
                     <div>
-                      <h5 className="font-medium text-yellow-800">Important Note</h5>
-                      <p className="text-sm text-yellow-700 mt-1">
+                      <h5 className="font-semibold text-yellow-800 mb-1">Important Note</h5>
+                      <p className="text-sm text-yellow-700">
                         This is an estimated cost based on current market rates. Actual costs may vary based on 
                         specific requirements, site conditions, and market fluctuations. Please contact us for 
                         a detailed quote.
@@ -432,10 +479,10 @@ const Calculator = () => {
                 </div>
               </>
             ) : (
-              <div className="calculator-card text-center">
+              <div className="calculator-card text-center py-12">
                 <CalculatorIcon className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-bold text-gray-600 mb-2">No Results Yet</h3>
-                <p className="text-gray-500">
+                <h3 className="heading-sm text-gray-600 mb-2">No Results Yet</h3>
+                <p className="body-sm text-gray-500">
                   Fill out the form on the left to get your construction cost estimate.
                 </p>
               </div>
@@ -444,8 +491,8 @@ const Calculator = () => {
         </div>
 
         {/* Additional Info */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg p-6 shadow-sm">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
             <CheckCircleIcon className="h-8 w-8 text-green-500 mb-3" />
             <h4 className="font-bold text-gray-800 mb-2">Accurate Estimates</h4>
             <p className="text-gray-600 text-sm">
@@ -453,7 +500,7 @@ const Calculator = () => {
             </p>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
             <MapPinIcon className="h-8 w-8 text-blue-500 mb-3" />
             <h4 className="font-bold text-gray-800 mb-2">Location-Based Pricing</h4>
             <p className="text-gray-600 text-sm">
@@ -461,7 +508,7 @@ const Calculator = () => {
             </p>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
             <DocumentTextIcon className="h-8 w-8 text-purple-500 mb-3" />
             <h4 className="font-bold text-gray-800 mb-2">Detailed Breakdown</h4>
             <p className="text-gray-600 text-sm">
