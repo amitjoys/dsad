@@ -437,6 +437,711 @@ class TestConstructPuneAPI(unittest.TestCase):
         # We'll accept either 401 (unauthorized) or 500 (server error) for now
         self.assertIn(response.status_code, [401, 500])
 
+    def test_13_admin_register(self):
+        """Test admin registration endpoint"""
+        print("\n=== Testing Admin Registration Endpoint ===")
+        
+        # Generate a unique email to avoid conflicts with existing admins
+        unique_id = str(uuid.uuid4())[:8]
+        
+        # Sample admin registration data
+        payload = {
+            "email": f"admin.{unique_id}@constructpune.com",
+            "password": "AdminSecurePass123!",
+            "name": "Admin User"
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/admin/auth/register", 
+            json=payload
+        )
+        print(f"Response status: {response.status_code}")
+        print(f"Response text: {response.text}")
+        
+        try:
+            response_json = response.json()
+            print(f"Response body: {response_json}")
+        except:
+            print("Could not parse JSON response")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("message", response.json())
+        self.assertIn("id", response.json())
+        self.assertIn("registered successfully", response.json()["message"].lower())
+        
+        # Save admin credentials for login test
+        self.admin_email = payload["email"]
+        self.admin_password = payload["password"]
+        
+        # Test duplicate registration (should fail)
+        print("\n--- Testing duplicate admin registration ---")
+        response = requests.post(
+            f"{API_BASE_URL}/admin/auth/register", 
+            json=payload
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+            self.assertEqual(response.status_code, 400)
+            self.assertIn("already registered", response.json()["detail"].lower())
+        except:
+            print(f"Response text: {response.text}")
+
+    def test_14_admin_login(self):
+        """Test admin login endpoint"""
+        print("\n=== Testing Admin Login Endpoint ===")
+        
+        # Check if we have admin credentials from registration test
+        if not hasattr(self, 'admin_email') or not hasattr(self, 'admin_password'):
+            print("No admin credentials available. Running admin registration test first.")
+            self.test_13_admin_register()
+        
+        # Test login with valid credentials
+        login_data = {
+            "username": self.admin_email,
+            "password": self.admin_password
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/admin/auth/login", 
+            data=login_data  # Note: login endpoint expects form data, not JSON
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("access_token", response.json())
+        self.assertIn("token_type", response.json())
+        self.assertEqual(response.json()["token_type"], "bearer")
+        
+        # Save token for admin info test
+        self.admin_token = response.json()["access_token"]
+        
+        # Test login with invalid credentials
+        print("\n--- Testing admin login with invalid credentials ---")
+        invalid_login = {
+            "username": self.admin_email,
+            "password": "WrongPassword123!"
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/admin/auth/login", 
+            data=invalid_login
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("incorrect", response.json()["detail"].lower())
+
+    def test_15_admin_me(self):
+        """Test get current admin info endpoint"""
+        print("\n=== Testing Get Current Admin Info Endpoint ===")
+        
+        # Check if we have an admin token from login test
+        if not hasattr(self, 'admin_token'):
+            print("No admin token available. Running admin login test first.")
+            self.test_14_admin_login()
+        
+        # Test with valid token
+        headers = {
+            "Authorization": f"Bearer {self.admin_token}"
+        }
+        
+        response = requests.get(
+            f"{API_BASE_URL}/admin/auth/me", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        admin_info = response.json()
+        self.assertIn("email", admin_info)
+        self.assertIn("name", admin_info)
+        self.assertEqual(admin_info["email"], self.admin_email)
+        self.assertTrue(admin_info["is_admin"])
+        
+        # Test with invalid token
+        print("\n--- Testing with invalid token ---")
+        invalid_headers = {
+            "Authorization": "Bearer invalid_token_here"
+        }
+        
+        response = requests.get(
+            f"{API_BASE_URL}/admin/auth/me", 
+            headers=invalid_headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 401)
+        self.assertIn("could not validate", response.json()["detail"].lower())
+
+    def test_16_seo_optimization(self):
+        """Test SEO optimization endpoint"""
+        print("\n=== Testing SEO Optimization Endpoint ===")
+        
+        # Check if we have an admin token from login test
+        if not hasattr(self, 'admin_token'):
+            print("No admin token available. Running admin login test first.")
+            self.test_14_admin_login()
+        
+        # Test SEO optimization
+        headers = {
+            "Authorization": f"Bearer {self.admin_token}"
+        }
+        
+        payload = {
+            "page_path": "/services/painting",
+            "content": "Professional painting services in Pune. We offer interior and exterior painting services with high-quality paints and skilled painters. Our painting services include wall painting, ceiling painting, and decorative painting.",
+            "target_keywords": ["painting services", "interior painting", "exterior painting", "pune painters"]
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/admin/seo/optimize", 
+            json=payload,
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+        
+        # Validate response structure
+        self.assertIn("keyword_analysis", result)
+        self.assertIn("content_suggestions", result)
+        self.assertIn("title_suggestions", result)
+        self.assertIn("description_suggestions", result)
+        self.assertIn("schema_markup", result)
+        
+        # Validate keyword analysis
+        for keyword in payload["target_keywords"]:
+            self.assertIn(keyword, result["keyword_analysis"])
+            self.assertIn("density", result["keyword_analysis"][keyword])
+            self.assertIn("count", result["keyword_analysis"][keyword])
+        
+        # Validate schema markup
+        self.assertEqual(result["schema_markup"]["@context"], "https://schema.org")
+        self.assertEqual(result["schema_markup"]["@type"], "Service")
+        
+        # Test without authentication
+        print("\n--- Testing without authentication ---")
+        response = requests.post(
+            f"{API_BASE_URL}/admin/seo/optimize", 
+            json=payload
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_17_seo_audit(self):
+        """Test SEO audit endpoint"""
+        print("\n=== Testing SEO Audit Endpoint ===")
+        
+        # Check if we have an admin token from login test
+        if not hasattr(self, 'admin_token'):
+            print("No admin token available. Running admin login test first.")
+            self.test_14_admin_login()
+        
+        # Test SEO audit
+        headers = {
+            "Authorization": f"Bearer {self.admin_token}"
+        }
+        
+        page_path = "/services/painting"
+        
+        response = requests.get(
+            f"{API_BASE_URL}/admin/seo/audit/{page_path}", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+        
+        # Validate response structure
+        self.assertIn("page_path", result)
+        self.assertIn("title_check", result)
+        self.assertIn("description_check", result)
+        self.assertIn("keywords_check", result)
+        self.assertIn("headings_check", result)
+        self.assertIn("images_check", result)
+        self.assertIn("recommendations", result)
+        
+        # Validate page path
+        self.assertEqual(result["page_path"], page_path)
+        
+        # Test without authentication
+        print("\n--- Testing without authentication ---")
+        response = requests.get(
+            f"{API_BASE_URL}/admin/seo/audit/{page_path}"
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_18_seo_data(self):
+        """Test SEO data endpoints"""
+        print("\n=== Testing SEO Data Endpoints ===")
+        
+        # Check if we have an admin token from login test
+        if not hasattr(self, 'admin_token'):
+            print("No admin token available. Running admin login test first.")
+            self.test_14_admin_login()
+        
+        headers = {
+            "Authorization": f"Bearer {self.admin_token}"
+        }
+        
+        # First, create SEO data through optimization
+        optimization_payload = {
+            "page_path": "/services/plumbing",
+            "content": "Professional plumbing services in Pune. We offer installation, repair, and maintenance services for all plumbing needs. Our services include pipe installation, leak repair, and bathroom plumbing.",
+            "target_keywords": ["plumbing services", "pipe installation", "leak repair", "bathroom plumbing"]
+        }
+        
+        requests.post(
+            f"{API_BASE_URL}/admin/seo/optimize", 
+            json=optimization_payload,
+            headers=headers
+        )
+        
+        # Test get all SEO data
+        print("\n--- Testing get all SEO data ---")
+        response = requests.get(
+            f"{API_BASE_URL}/admin/seo/data", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        all_seo_data = response.json()
+        self.assertIsInstance(all_seo_data, list)
+        self.assertGreater(len(all_seo_data), 0)
+        
+        # Test get specific SEO data
+        print("\n--- Testing get specific SEO data ---")
+        page_path = "/services/plumbing"
+        response = requests.get(
+            f"{API_BASE_URL}/admin/seo/data/{page_path}", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        seo_data = response.json()
+        self.assertEqual(seo_data["page_path"], page_path)
+        self.assertIn("title", seo_data)
+        self.assertIn("description", seo_data)
+        self.assertIn("keywords", seo_data)
+        
+        # Test update SEO data
+        print("\n--- Testing update SEO data ---")
+        update_payload = {
+            "page_path": page_path,
+            "title": "Updated Plumbing Services in Pune | Professional Plumbers",
+            "description": "Updated description for plumbing services in Pune. Expert plumbers for all your needs.",
+            "keywords": ["plumbing", "plumbers", "pipe repair", "bathroom plumbing"],
+            "meta_tags": {
+                "title": "Updated Plumbing Services in Pune | Professional Plumbers",
+                "description": "Updated description for plumbing services in Pune. Expert plumbers for all your needs.",
+                "keywords": "plumbing, plumbers, pipe repair, bathroom plumbing"
+            }
+        }
+        
+        response = requests.put(
+            f"{API_BASE_URL}/admin/seo/data/{page_path}", 
+            json=update_payload,
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("message", response.json())
+        self.assertIn("updated successfully", response.json()["message"].lower())
+        
+        # Verify the update
+        response = requests.get(
+            f"{API_BASE_URL}/admin/seo/data/{page_path}", 
+            headers=headers
+        )
+        self.assertEqual(response.status_code, 200)
+        updated_seo_data = response.json()
+        self.assertEqual(updated_seo_data["title"], update_payload["title"])
+        self.assertEqual(updated_seo_data["description"], update_payload["description"])
+        
+        # Test without authentication
+        print("\n--- Testing without authentication ---")
+        response = requests.get(
+            f"{API_BASE_URL}/admin/seo/data"
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_19_service_pages(self):
+        """Test service pages endpoints"""
+        print("\n=== Testing Service Pages Endpoints ===")
+        
+        # Check if we have an admin token from login test
+        if not hasattr(self, 'admin_token'):
+            print("No admin token available. Running admin login test first.")
+            self.test_14_admin_login()
+        
+        headers = {
+            "Authorization": f"Bearer {self.admin_token}"
+        }
+        
+        # Test get all service pages (admin)
+        print("\n--- Testing get all service pages (admin) ---")
+        response = requests.get(
+            f"{API_BASE_URL}/admin/services", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        all_services = response.json()
+        self.assertIsInstance(all_services, list)
+        
+        # Verify that we have the expected number of services (11)
+        self.assertGreaterEqual(len(all_services), 11, "Expected at least 11 service pages")
+        
+        # Test get all service pages (public)
+        print("\n--- Testing get all service pages (public) ---")
+        response = requests.get(f"{API_BASE_URL}/services")
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        public_services = response.json()
+        self.assertIsInstance(public_services, list)
+        self.assertGreater(len(public_services), 0)
+        
+        # Get a specific service slug for testing
+        service_slug = public_services[0]["slug"]
+        
+        # Test get specific service page (public)
+        print(f"\n--- Testing get specific service page (public): {service_slug} ---")
+        response = requests.get(f"{API_BASE_URL}/services/{service_slug}")
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        service = response.json()
+        self.assertEqual(service["slug"], service_slug)
+        self.assertIn("title", service)
+        self.assertIn("description", service)
+        self.assertIn("content", service)
+        self.assertIn("features", service)
+        
+        # Test get specific service page (admin)
+        print(f"\n--- Testing get specific service page (admin): {service_slug} ---")
+        response = requests.get(
+            f"{API_BASE_URL}/admin/services/{service_slug}",
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        admin_service = response.json()
+        self.assertEqual(admin_service["slug"], service_slug)
+        
+        # Test create new service page
+        print("\n--- Testing create new service page ---")
+        new_service = {
+            "slug": "test-service",
+            "title": "Test Service",
+            "description": "This is a test service for API testing",
+            "content": "<div>Test service content</div>",
+            "features": ["Feature 1", "Feature 2", "Feature 3"],
+            "pricing_info": {
+                "starting_price": 1000,
+                "unit": "per service",
+                "factors": ["Factor 1", "Factor 2"]
+            },
+            "images": ["https://example.com/image1.jpg", "https://example.com/image2.jpg"],
+            "seo_data": {
+                "title": "Test Service | ConstructPune",
+                "description": "Test service description for SEO",
+                "keywords": ["test", "service", "construction"]
+            }
+        }
+        
+        response = requests.post(
+            f"{API_BASE_URL}/admin/services",
+            json=new_service,
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("message", response.json())
+        self.assertIn("created successfully", response.json()["message"].lower())
+        
+        # Test update service page
+        print("\n--- Testing update service page ---")
+        update_service = new_service.copy()
+        update_service["title"] = "Updated Test Service"
+        update_service["description"] = "Updated test service description"
+        
+        response = requests.put(
+            f"{API_BASE_URL}/admin/services/test-service",
+            json=update_service,
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("message", response.json())
+        self.assertIn("updated successfully", response.json()["message"].lower())
+        
+        # Verify the update
+        response = requests.get(
+            f"{API_BASE_URL}/admin/services/test-service",
+            headers=headers
+        )
+        self.assertEqual(response.status_code, 200)
+        updated_service = response.json()
+        self.assertEqual(updated_service["title"], "Updated Test Service")
+        self.assertEqual(updated_service["description"], "Updated test service description")
+        
+        # Test delete service page
+        print("\n--- Testing delete service page ---")
+        response = requests.delete(
+            f"{API_BASE_URL}/admin/services/test-service",
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("message", response.json())
+        self.assertIn("deleted successfully", response.json()["message"].lower())
+        
+        # Verify the deletion
+        response = requests.get(
+            f"{API_BASE_URL}/admin/services/test-service",
+            headers=headers
+        )
+        self.assertEqual(response.status_code, 404)
+        
+        # Test without authentication
+        print("\n--- Testing without authentication ---")
+        response = requests.post(
+            f"{API_BASE_URL}/admin/services",
+            json=new_service
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_20_admin_dashboard(self):
+        """Test admin dashboard statistics endpoint"""
+        print("\n=== Testing Admin Dashboard Statistics Endpoint ===")
+        
+        # Check if we have an admin token from login test
+        if not hasattr(self, 'admin_token'):
+            print("No admin token available. Running admin login test first.")
+            self.test_14_admin_login()
+        
+        headers = {
+            "Authorization": f"Bearer {self.admin_token}"
+        }
+        
+        # Test dashboard statistics
+        response = requests.get(
+            f"{API_BASE_URL}/admin/dashboard/stats", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        stats = response.json()
+        
+        # Validate response structure
+        self.assertIn("total_users", stats)
+        self.assertIn("total_contacts", stats)
+        self.assertIn("total_projects", stats)
+        self.assertIn("total_calculations", stats)
+        self.assertIn("total_services", stats)
+        self.assertIn("recent_contacts", stats)
+        self.assertIn("recent_calculations", stats)
+        
+        # Validate data types
+        self.assertIsInstance(stats["total_users"], int)
+        self.assertIsInstance(stats["total_contacts"], int)
+        self.assertIsInstance(stats["total_projects"], int)
+        self.assertIsInstance(stats["total_calculations"], int)
+        self.assertIsInstance(stats["total_services"], int)
+        self.assertIsInstance(stats["recent_contacts"], list)
+        self.assertIsInstance(stats["recent_calculations"], list)
+        
+        # Test without authentication
+        print("\n--- Testing without authentication ---")
+        response = requests.get(f"{API_BASE_URL}/admin/dashboard/stats")
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 401)
+
+    def test_21_admin_user_management(self):
+        """Test admin user management endpoints"""
+        print("\n=== Testing Admin User Management Endpoints ===")
+        
+        # Check if we have an admin token from login test
+        if not hasattr(self, 'admin_token'):
+            print("No admin token available. Running admin login test first.")
+            self.test_14_admin_login()
+        
+        headers = {
+            "Authorization": f"Bearer {self.admin_token}"
+        }
+        
+        # Test get all users
+        print("\n--- Testing get all users ---")
+        response = requests.get(
+            f"{API_BASE_URL}/admin/users", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        users = response.json()
+        self.assertIsInstance(users, list)
+        
+        # Verify that hashed_password is not returned
+        for user in users:
+            self.assertNotIn("hashed_password", user)
+        
+        # Test get all contacts
+        print("\n--- Testing get all contacts ---")
+        response = requests.get(
+            f"{API_BASE_URL}/admin/contacts", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        contacts = response.json()
+        self.assertIsInstance(contacts, list)
+        
+        # Test get all calculations
+        print("\n--- Testing get all calculations ---")
+        response = requests.get(
+            f"{API_BASE_URL}/admin/calculations", 
+            headers=headers
+        )
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {json.dumps(response.json(), indent=2)}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 200)
+        calculations = response.json()
+        self.assertIsInstance(calculations, list)
+        
+        # Test without authentication
+        print("\n--- Testing without authentication ---")
+        response = requests.get(f"{API_BASE_URL}/admin/users")
+        print(f"Response status: {response.status_code}")
+        try:
+            print(f"Response body: {response.json()}")
+        except:
+            print(f"Response text: {response.text}")
+        
+        self.assertEqual(response.status_code, 401)
+
 
 if __name__ == "__main__":
     unittest.main()
