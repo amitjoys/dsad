@@ -903,3 +903,741 @@ async def get_all_calculations(current_admin: dict = Depends(get_current_admin))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
+
+# Initialize service pages data
+async def initialize_service_pages():
+    """Initialize service pages in the database"""
+    service_pages_data = [
+        {
+            "slug": "painting-services",
+            "title": "Professional Painting Services in Pune",
+            "description": "Transform your space with our expert painting services. From interior to exterior, residential to commercial - we deliver quality results.",
+            "content": """
+            <div class="service-content">
+                <h2>Professional Painting Services</h2>
+                <p>Our expert painting team delivers exceptional results for both interior and exterior painting projects. We use premium quality paints and modern techniques to ensure long-lasting, beautiful finishes.</p>
+                
+                <h3>Our Painting Services Include:</h3>
+                <ul>
+                    <li>Interior Wall Painting</li>
+                    <li>Exterior Wall Painting</li>
+                    <li>Ceiling Painting</li>
+                    <li>Texture Painting</li>
+                    <li>Stencil and Decorative Painting</li>
+                    <li>Wood and Metal Painting</li>
+                    <li>Waterproofing with Paint</li>
+                    <li>Color Consultation</li>
+                </ul>
+                
+                <h3>Why Choose Our Painting Services?</h3>
+                <ul>
+                    <li>Skilled and experienced painters</li>
+                    <li>Premium quality paints from trusted brands</li>
+                    <li>Proper surface preparation</li>
+                    <li>Clean and efficient work process</li>
+                    <li>Competitive pricing</li>
+                    <li>Warranty on workmanship</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "Interior & Exterior Painting",
+                "Texture & Decorative Painting",
+                "Premium Quality Paints",
+                "Professional Color Consultation",
+                "Surface Preparation",
+                "Clean Work Process",
+                "Warranty Included"
+            ],
+            "pricing_info": {
+                "starting_price": 15,
+                "unit": "per sq ft",
+                "factors": [
+                    "Surface condition",
+                    "Paint quality",
+                    "Number of coats",
+                    "Complexity of work",
+                    "Location accessibility"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Professional Painting Services in Pune | Interior & Exterior Painting",
+                "description": "Get expert painting services in Pune for interior and exterior walls. Professional painters, quality paints, competitive pricing. Free consultation available.",
+                "keywords": ["painting services pune", "interior painting", "exterior painting", "professional painters", "wall painting"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "window-fitment-services",
+            "title": "Window Fitment Services in Pune",
+            "description": "Professional window installation and fitment services. UPVC windows, aluminum windows, wooden windows - expert installation with warranty.",
+            "content": """
+            <div class="service-content">
+                <h2>Expert Window Fitment Services</h2>
+                <p>Our skilled technicians provide professional window installation and fitment services for all types of windows. We ensure proper alignment, weatherproofing, and security for your windows.</p>
+                
+                <h3>Window Types We Handle:</h3>
+                <ul>
+                    <li>UPVC Windows</li>
+                    <li>Aluminum Windows</li>
+                    <li>Wooden Windows</li>
+                    <li>Sliding Windows</li>
+                    <li>Casement Windows</li>
+                    <li>Fixed Windows</li>
+                    <li>Bay Windows</li>
+                    <li>French Windows</li>
+                </ul>
+                
+                <h3>Our Services Include:</h3>
+                <ul>
+                    <li>Window measurement and consultation</li>
+                    <li>Custom window manufacturing</li>
+                    <li>Professional installation</li>
+                    <li>Weatherproofing and sealing</li>
+                    <li>Hardware installation</li>
+                    <li>Quality testing</li>
+                    <li>Post-installation support</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "UPVC, Aluminum & Wooden Windows",
+                "Custom Manufacturing",
+                "Professional Installation",
+                "Weatherproofing",
+                "Security Features",
+                "Energy Efficient",
+                "Warranty Included"
+            ],
+            "pricing_info": {
+                "starting_price": 450,
+                "unit": "per sq ft",
+                "factors": [
+                    "Window type and material",
+                    "Size and complexity",
+                    "Hardware quality",
+                    "Installation complexity",
+                    "Weatherproofing requirements"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1582030450248-87d1e9e4c7a6?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Window Fitment Services in Pune | UPVC & Aluminum Windows",
+                "description": "Professional window fitment services in Pune. Expert installation of UPVC, aluminum, and wooden windows with warranty. Free consultation available.",
+                "keywords": ["window fitment pune", "upvc windows", "aluminum windows", "window installation", "window replacement"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "door-fitment-services",
+            "title": "Door Fitment Services in Pune",
+            "description": "Professional door installation services for all types of doors. Main doors, interior doors, sliding doors - expert fitment with security features.",
+            "content": """
+            <div class="service-content">
+                <h2>Professional Door Fitment Services</h2>
+                <p>Our experienced team provides comprehensive door installation services for residential and commercial properties. We ensure proper alignment, security, and functionality.</p>
+                
+                <h3>Door Types We Install:</h3>
+                <ul>
+                    <li>Main Entry Doors</li>
+                    <li>Interior Doors</li>
+                    <li>Sliding Doors</li>
+                    <li>Folding Doors</li>
+                    <li>French Doors</li>
+                    <li>Security Doors</li>
+                    <li>Fire-rated Doors</li>
+                    <li>Bathroom Doors</li>
+                </ul>
+                
+                <h3>Materials We Work With:</h3>
+                <ul>
+                    <li>Solid Wood Doors</li>
+                    <li>Engineered Wood Doors</li>
+                    <li>UPVC Doors</li>
+                    <li>Aluminum Doors</li>
+                    <li>Glass Doors</li>
+                    <li>Steel Doors</li>
+                    <li>Fiber Doors</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "All Door Types",
+                "Multiple Materials",
+                "Security Features",
+                "Custom Sizing",
+                "Professional Installation",
+                "Hardware Installation",
+                "Warranty Included"
+            ],
+            "pricing_info": {
+                "starting_price": 5000,
+                "unit": "per door",
+                "factors": [
+                    "Door type and material",
+                    "Size and customization",
+                    "Hardware quality",
+                    "Installation complexity",
+                    "Security features"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1562113530-57ba1cea3efe?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Door Fitment Services in Pune | Main Door & Interior Door Installation",
+                "description": "Professional door fitment services in Pune for all types of doors. Expert installation, security features, and quality materials. Free consultation available.",
+                "keywords": ["door fitment pune", "main door installation", "interior doors", "sliding doors", "door replacement"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "rework-services",
+            "title": "Rework Services in Pune",
+            "description": "Quality rework and renovation services for construction projects. Fixing defects, improvements, and modifications with expert craftsmanship.",
+            "content": """
+            <div class="service-content">
+                <h2>Professional Rework Services</h2>
+                <p>Our skilled team specializes in rework and renovation services to fix defects, make improvements, and modify existing structures. We ensure quality results that meet your expectations.</p>
+                
+                <h3>Our Rework Services Include:</h3>
+                <ul>
+                    <li>Structural Repairs</li>
+                    <li>Plumbing Rework</li>
+                    <li>Electrical Rework</li>
+                    <li>Painting Touch-ups</li>
+                    <li>Tiling Repairs</li>
+                    <li>Flooring Modifications</li>
+                    <li>Wall Modifications</li>
+                    <li>Ceiling Repairs</li>
+                </ul>
+                
+                <h3>Common Rework Projects:</h3>
+                <ul>
+                    <li>Fixing construction defects</li>
+                    <li>Bathroom renovations</li>
+                    <li>Kitchen modifications</li>
+                    <li>Room additions</li>
+                    <li>Structural modifications</li>
+                    <li>Quality improvements</li>
+                    <li>Code compliance updates</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "Defect Rectification",
+                "Quality Improvements",
+                "Structural Modifications",
+                "Multiple Trades",
+                "Expert Craftsmanship",
+                "Quick Turnaround",
+                "Warranty on Work"
+            ],
+            "pricing_info": {
+                "starting_price": 200,
+                "unit": "per sq ft",
+                "factors": [
+                    "Scope of rework",
+                    "Complexity of issues",
+                    "Materials required",
+                    "Time constraints",
+                    "Structural modifications"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Rework Services in Pune | Construction Rework & Renovation",
+                "description": "Professional rework services in Pune for construction defects, renovations, and improvements. Expert craftsmanship and quality results guaranteed.",
+                "keywords": ["rework services pune", "construction rework", "renovation services", "building repairs", "structural modifications"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "interior-design-services",
+            "title": "Interior Design Services in Pune",
+            "description": "Transform your space with our professional interior design services. Complete design solutions for homes and offices with modern aesthetics.",
+            "content": """
+            <div class="service-content">
+                <h2>Professional Interior Design Services</h2>
+                <p>Our creative interior designers work closely with you to create beautiful, functional spaces that reflect your style and meet your needs. From concept to completion, we handle every detail.</p>
+                
+                <h3>Our Interior Design Services:</h3>
+                <ul>
+                    <li>Complete Home Interior Design</li>
+                    <li>Office Interior Design</li>
+                    <li>Bedroom Design</li>
+                    <li>Living Room Design</li>
+                    <li>Kitchen Design</li>
+                    <li>Bathroom Design</li>
+                    <li>Modular Furniture Design</li>
+                    <li>Lighting Design</li>
+                </ul>
+                
+                <h3>Design Services Include:</h3>
+                <ul>
+                    <li>Space planning and layout</li>
+                    <li>Color schemes and themes</li>
+                    <li>Furniture selection and placement</li>
+                    <li>Lighting design</li>
+                    <li>Material and finish selection</li>
+                    <li>Custom furniture design</li>
+                    <li>3D visualization</li>
+                    <li>Project management</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "Complete Design Solutions",
+                "3D Visualization",
+                "Custom Furniture",
+                "Modern Aesthetics",
+                "Space Optimization",
+                "Project Management",
+                "Warranty Included"
+            ],
+            "pricing_info": {
+                "starting_price": 150,
+                "unit": "per sq ft",
+                "factors": [
+                    "Design complexity",
+                    "Material quality",
+                    "Custom furniture",
+                    "Project scope",
+                    "Timeline requirements"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1582030450248-87d1e9e4c7a6?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Interior Design Services in Pune | Home & Office Interior Design",
+                "description": "Professional interior design services in Pune for homes and offices. Modern designs, 3D visualization, and complete project management. Free consultation available.",
+                "keywords": ["interior design pune", "home interior design", "office interior design", "interior decorator", "modular furniture"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "tiles-fitment-services",
+            "title": "Tiles Fitment Services in Pune",
+            "description": "Professional tile installation services for all types of tiles. Floor tiles, wall tiles, bathroom tiles - expert fitment with precision.",
+            "content": """
+            <div class="service-content">
+                <h2>Expert Tiles Fitment Services</h2>
+                <p>Our skilled tile installers provide professional tile fitment services for residential and commercial properties. We ensure precise alignment, proper sealing, and long-lasting results.</p>
+                
+                <h3>Tile Types We Install:</h3>
+                <ul>
+                    <li>Vitrified Tiles</li>
+                    <li>Ceramic Tiles</li>
+                    <li>Marble Tiles</li>
+                    <li>Granite Tiles</li>
+                    <li>Porcelain Tiles</li>
+                    <li>Mosaic Tiles</li>
+                    <li>Natural Stone Tiles</li>
+                    <li>Designer Tiles</li>
+                </ul>
+                
+                <h3>Areas We Cover:</h3>
+                <ul>
+                    <li>Living Room Flooring</li>
+                    <li>Bedroom Flooring</li>
+                    <li>Kitchen Tiles</li>
+                    <li>Bathroom Tiles</li>
+                    <li>Balcony Tiles</li>
+                    <li>Staircase Tiles</li>
+                    <li>Wall Cladding</li>
+                    <li>Outdoor Tiles</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "All Tile Types",
+                "Precision Installation",
+                "Waterproofing",
+                "Quality Grouting",
+                "Pattern Design",
+                "Proper Alignment",
+                "Warranty Included"
+            ],
+            "pricing_info": {
+                "starting_price": 35,
+                "unit": "per sq ft",
+                "factors": [
+                    "Tile type and quality",
+                    "Size and complexity",
+                    "Pattern requirements",
+                    "Surface preparation",
+                    "Waterproofing needs"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1562113530-57ba1cea3efe?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Tiles Fitment Services in Pune | Floor & Wall Tile Installation",
+                "description": "Professional tiles fitment services in Pune for all types of tiles. Expert installation, precision work, and quality results. Free consultation available.",
+                "keywords": ["tiles fitment pune", "tile installation", "floor tiles", "wall tiles", "bathroom tiles", "kitchen tiles"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "kitchen-styling-services",
+            "title": "Kitchen Styling Services in Pune",
+            "description": "Transform your kitchen with our professional styling services. Modular kitchens, custom designs, and complete kitchen solutions.",
+            "content": """
+            <div class="service-content">
+                <h2>Professional Kitchen Styling Services</h2>
+                <p>Our kitchen design experts create beautiful, functional kitchens that combine style with practicality. From modular solutions to custom designs, we transform your cooking space.</p>
+                
+                <h3>Kitchen Styling Services:</h3>
+                <ul>
+                    <li>Modular Kitchen Design</li>
+                    <li>Custom Kitchen Solutions</li>
+                    <li>Kitchen Renovation</li>
+                    <li>Cabinet Installation</li>
+                    <li>Countertop Installation</li>
+                    <li>Kitchen Appliance Integration</li>
+                    <li>Backsplash Design</li>
+                    <li>Storage Solutions</li>
+                </ul>
+                
+                <h3>Features We Provide:</h3>
+                <ul>
+                    <li>Space-efficient designs</li>
+                    <li>Premium materials</li>
+                    <li>Modern hardware</li>
+                    <li>Smart storage solutions</li>
+                    <li>Appliance integration</li>
+                    <li>Easy maintenance</li>
+                    <li>Warranty on products</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "Modular Kitchens",
+                "Custom Designs",
+                "Space Optimization",
+                "Premium Materials",
+                "Smart Storage",
+                "Appliance Integration",
+                "Warranty Included"
+            ],
+            "pricing_info": {
+                "starting_price": 1200,
+                "unit": "per sq ft",
+                "factors": [
+                    "Kitchen size",
+                    "Material quality",
+                    "Design complexity",
+                    "Appliance integration",
+                    "Hardware quality"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1594736797933-d0cea80b1d55?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1561968098-4e99b1a5e6e7?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Kitchen Styling Services in Pune | Modular Kitchen Design",
+                "description": "Professional kitchen styling services in Pune. Modular kitchens, custom designs, and complete kitchen solutions. Transform your cooking space today.",
+                "keywords": ["kitchen styling pune", "modular kitchen", "kitchen design", "kitchen renovation", "custom kitchen"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "plumbing-services",
+            "title": "Plumbing Services in Pune",
+            "description": "Professional plumbing services for all your water and drainage needs. Installation, repairs, and maintenance by skilled plumbers.",
+            "content": """
+            <div class="service-content">
+                <h2>Professional Plumbing Services</h2>
+                <p>Our certified plumbers provide comprehensive plumbing services for residential and commercial properties. From installations to emergency repairs, we handle all your plumbing needs.</p>
+                
+                <h3>Plumbing Services We Offer:</h3>
+                <ul>
+                    <li>Pipe Installation and Repair</li>
+                    <li>Bathroom Plumbing</li>
+                    <li>Kitchen Plumbing</li>
+                    <li>Drainage Systems</li>
+                    <li>Water Tank Installation</li>
+                    <li>Faucet and Fixture Installation</li>
+                    <li>Water Heater Services</li>
+                    <li>Emergency Plumbing</li>
+                </ul>
+                
+                <h3>Common Plumbing Issues We Fix:</h3>
+                <ul>
+                    <li>Leaky pipes and faucets</li>
+                    <li>Blocked drains</li>
+                    <li>Low water pressure</li>
+                    <li>Running toilets</li>
+                    <li>Water heater problems</li>
+                    <li>Pipe bursts</li>
+                    <li>Drainage issues</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "Complete Plumbing Solutions",
+                "Emergency Services",
+                "Skilled Plumbers",
+                "Quality Materials",
+                "Pipe Installation",
+                "Drainage Systems",
+                "Warranty on Work"
+            ],
+            "pricing_info": {
+                "starting_price": 500,
+                "unit": "per service",
+                "factors": [
+                    "Type of service",
+                    "Complexity of issue",
+                    "Materials required",
+                    "Emergency service",
+                    "Location accessibility"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1562113530-57ba1cea3efe?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Plumbing Services in Pune | Professional Plumber & Pipe Installation",
+                "description": "Professional plumbing services in Pune for all your water and drainage needs. Emergency plumbing, installations, and repairs by skilled plumbers.",
+                "keywords": ["plumbing services pune", "plumber pune", "pipe installation", "drainage systems", "emergency plumbing"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "masonry-work-services",
+            "title": "Masonry Work Services in Pune",
+            "description": "Professional masonry services for all your construction needs. Skilled masons for brick work, stone work, and structural masonry.",
+            "content": """
+            <div class="service-content">
+                <h2>Expert Masonry Work Services</h2>
+                <p>Our skilled masons provide professional masonry services for residential and commercial construction projects. We specialize in brick work, stone work, and structural masonry.</p>
+                
+                <h3>Masonry Services We Provide:</h3>
+                <ul>
+                    <li>Brick Work and Masonry</li>
+                    <li>Stone Work</li>
+                    <li>Block Work</li>
+                    <li>Plastering</li>
+                    <li>Foundation Work</li>
+                    <li>Retaining Walls</li>
+                    <li>Chimney Construction</li>
+                    <li>Repair and Restoration</li>
+                </ul>
+                
+                <h3>Materials We Work With:</h3>
+                <ul>
+                    <li>Clay Bricks</li>
+                    <li>Concrete Blocks</li>
+                    <li>Natural Stone</li>
+                    <li>Manufactured Stone</li>
+                    <li>Cement Blocks</li>
+                    <li>Fly Ash Bricks</li>
+                    <li>Hollow Blocks</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "Skilled Masons",
+                "Quality Materials",
+                "Structural Work",
+                "Brick & Stone Work",
+                "Foundation Services",
+                "Repair & Restoration",
+                "Warranty on Work"
+            ],
+            "pricing_info": {
+                "starting_price": 45,
+                "unit": "per sq ft",
+                "factors": [
+                    "Type of masonry work",
+                    "Material selection",
+                    "Structural complexity",
+                    "Height and access",
+                    "Quality requirements"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Masonry Work Services in Pune | Brick Work & Stone Work",
+                "description": "Professional masonry services in Pune by skilled masons. Brick work, stone work, plastering, and structural masonry. Quality workmanship guaranteed.",
+                "keywords": ["masonry work pune", "brick work", "stone work", "masonry contractor", "structural masonry"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "water-proofing-services",
+            "title": "Water Proofing Services in Pune",
+            "description": "Professional waterproofing services to protect your property from water damage. Terrace, bathroom, and basement waterproofing solutions.",
+            "content": """
+            <div class="service-content">
+                <h2>Professional Water Proofing Services</h2>
+                <p>Our waterproofing experts provide comprehensive solutions to protect your property from water damage. We use advanced materials and techniques for long-lasting results.</p>
+                
+                <h3>Waterproofing Services:</h3>
+                <ul>
+                    <li>Terrace Waterproofing</li>
+                    <li>Bathroom Waterproofing</li>
+                    <li>Basement Waterproofing</li>
+                    <li>Roof Waterproofing</li>
+                    <li>Wall Waterproofing</li>
+                    <li>Balcony Waterproofing</li>
+                    <li>Swimming Pool Waterproofing</li>
+                    <li>Leak Repair Services</li>
+                </ul>
+                
+                <h3>Waterproofing Solutions:</h3>
+                <ul>
+                    <li>Membrane waterproofing</li>
+                    <li>Liquid waterproofing</li>
+                    <li>Crystalline waterproofing</li>
+                    <li>Injection waterproofing</li>
+                    <li>Bituminous waterproofing</li>
+                    <li>APP membrane systems</li>
+                    <li>Polyurethane coatings</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "Complete Waterproofing",
+                "Advanced Materials",
+                "Leak Detection",
+                "Long-lasting Solutions",
+                "Expert Application",
+                "Quality Assurance",
+                "Warranty Included"
+            ],
+            "pricing_info": {
+                "starting_price": 65,
+                "unit": "per sq ft",
+                "factors": [
+                    "Area to be waterproofed",
+                    "Type of waterproofing",
+                    "Material quality",
+                    "Surface condition",
+                    "Accessibility"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1594736797933-d0cea80b1d55?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1561968098-4e99b1a5e6e7?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Water Proofing Services in Pune | Terrace & Bathroom Waterproofing",
+                "description": "Professional waterproofing services in Pune for terrace, bathroom, and basement. Prevent water damage with expert waterproofing solutions.",
+                "keywords": ["waterproofing pune", "terrace waterproofing", "bathroom waterproofing", "leak repair", "waterproofing contractor"]
+            },
+            "is_active": True
+        },
+        {
+            "slug": "grills-guard-rail-fitment-services",
+            "title": "Grills and Guard Rail Fitment Services in Pune",
+            "description": "Professional installation of grills and guard rails for safety and security. Window grills, balcony grills, and safety rails installation.",
+            "content": """
+            <div class="service-content">
+                <h2>Grills and Guard Rail Fitment Services</h2>
+                <p>Our skilled technicians provide professional installation of grills and guard rails for enhanced safety and security. We offer custom designs and quality materials for long-lasting protection.</p>
+                
+                <h3>Grill Services We Provide:</h3>
+                <ul>
+                    <li>Window Grills</li>
+                    <li>Balcony Grills</li>
+                    <li>Staircase Railings</li>
+                    <li>Gate Grills</li>
+                    <li>Compound Wall Grills</li>
+                    <li>Decorative Grills</li>
+                    <li>Security Grills</li>
+                    <li>Custom Grill Designs</li>
+                </ul>
+                
+                <h3>Materials We Use:</h3>
+                <ul>
+                    <li>Mild Steel (MS)</li>
+                    <li>Stainless Steel (SS)</li>
+                    <li>Aluminum</li>
+                    <li>Wrought Iron</li>
+                    <li>Galvanized Steel</li>
+                    <li>Powder Coated Steel</li>
+                </ul>
+            </div>
+            """,
+            "features": [
+                "Custom Designs",
+                "Quality Materials",
+                "Safety & Security",
+                "Professional Installation",
+                "Corrosion Resistance",
+                "Decorative Options",
+                "Warranty Included"
+            ],
+            "pricing_info": {
+                "starting_price": 180,
+                "unit": "per sq ft",
+                "factors": [
+                    "Design complexity",
+                    "Material type",
+                    "Size and dimensions",
+                    "Installation location",
+                    "Custom requirements"
+                ]
+            },
+            "images": [
+                "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1562113530-57ba1cea3efe?w=800&h=600&fit=crop",
+                "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=800&h=600&fit=crop"
+            ],
+            "seo_data": {
+                "title": "Grills & Guard Rail Fitment Services in Pune | Window & Balcony Grills",
+                "description": "Professional grills and guard rail fitment services in Pune. Custom window grills, balcony grills, and safety railings installation.",
+                "keywords": ["grills fitment pune", "window grills", "balcony grills", "guard rails", "safety railings", "grill installation"]
+            },
+            "is_active": True
+        }
+    ]
+    
+    # Check if service pages already exist
+    existing_count = await db.service_pages.count_documents({})
+    if existing_count == 0:
+        # Insert service pages
+        for service_data in service_pages_data:
+            service_data["created_at"] = datetime.now()
+            service_data["updated_at"] = datetime.now()
+            await db.service_pages.insert_one(service_data)
+        print(f"Initialized {len(service_pages_data)} service pages")
+    else:
+        print(f"Service pages already exist ({existing_count} found)")
+
+# Initialize service pages on startup
+@app.on_event("startup")
+async def startup_event():
+    await initialize_service_pages()
