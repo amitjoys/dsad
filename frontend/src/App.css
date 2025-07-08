@@ -1,0 +1,353 @@
+/* Additional custom styles for the app */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-fadeInLeft {
+  animation: fadeInLeft 0.8s ease-out;
+}
+
+.animate-fadeInRight {
+  animation: fadeInRight 0.8s ease-out;
+}
+
+/* Hover effects for interactive elements */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Background patterns */
+.bg-pattern-dots {
+  background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.bg-pattern-lines {
+  background-image: linear-gradient(45deg, #f3f4f6 25%, transparent 25%),
+                    linear-gradient(-45deg, #f3f4f6 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, #f3f4f6 75%),
+                    linear-gradient(-45deg, transparent 75%, #f3f4f6 75%);
+  background-size: 20px 20px;
+}
+
+/* Custom gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #ec4899 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, #eab308 0%, #f59e0b 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+}
+
+/* Text effects */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Loading states */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Mobile-first responsive design utilities */
+@media (max-width: 640px) {
+  .mobile-center {
+    text-align: center;
+  }
+  
+  .mobile-full {
+    width: 100%;
+  }
+  
+  .mobile-stack {
+    flex-direction: column;
+  }
+  
+  .mobile-space-y-4 > * + * {
+    margin-top: 1rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break {
+    page-break-before: always;
+  }
+  
+  .print-break-inside {
+    page-break-inside: avoid;
+  }
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar for webkit browsers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Image optimization */
+.optimized-image {
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.optimized-image:hover {
+  transform: scale(1.05);
+}
+
+/* Form validation styles */
+.form-field-valid {
+  border-color: #22c55e;
+  background-color: #f0fdf4;
+}
+
+.form-field-invalid {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.form-field-valid:focus {
+  ring-color: #22c55e;
+}
+
+.form-field-invalid:focus {
+  ring-color: #ef4444;
+}
+
+/* Interactive elements */
+.interactive-element {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.interactive-element:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.interactive-element:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Notification styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  min-width: 300px;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification-success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-left: 4px solid #22c55e;
+}
+
+.notification-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid #ef4444;
+}
+
+.notification-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-left: 4px solid #f59e0b;
+}
+
+.notification-info {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-left: 4px solid #3b82f6;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Utility classes */
+.backdrop-blur {
+  backdrop-filter: blur(10px);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.content-visibility-auto {
+  content-visibility: auto;
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  .dark-mode {
+    background-color: #111827;
+    color: #f9fafb;
+  }
+  
+  .dark-mode .bg-white {
+    background-color: #1f2937;
+  }
+  
+  .dark-mode .text-gray-900 {
+    color: #f9fafb;
+  }
+  
+  .dark-mode .text-gray-600 {
+    color: #d1d5db;
+  }
+  
+  .dark-mode .border-gray-200 {
+    border-color: #374151;
+  }
+}
