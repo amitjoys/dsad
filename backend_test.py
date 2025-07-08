@@ -2,6 +2,7 @@ import requests
 import unittest
 import json
 import os
+import uuid
 from dotenv import load_dotenv
 
 # Load environment variables
