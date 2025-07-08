@@ -38,40 +38,111 @@
 }
 
 @layer components {
+  /* Enhanced Button Styles */
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl;
+    @apply bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary-600 disabled:hover:shadow-lg disabled:hover:translate-y-0 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
   
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-primary-600 font-semibold py-3 px-6 rounded-lg border-2 border-primary-600 transition-colors duration-200;
+    @apply bg-white hover:bg-gray-50 active:bg-gray-100 text-primary-600 font-semibold py-3 px-6 rounded-lg border-2 border-primary-600 hover:border-primary-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
   
   .btn-accent {
-    @apply bg-accent-600 hover:bg-accent-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl;
+    @apply bg-accent-600 hover:bg-accent-700 active:bg-accent-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
   }
   
+  /* Enhanced Card Styles */
   .card {
-    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden;
+    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200;
   }
   
+  .card-interactive {
+    @apply card transform hover:scale-105 hover:-translate-y-1 active:scale-100 active:translate-y-0;
+  }
+  
+  /* Enhanced Layout Styles */
   .section-padding {
-    @apply py-16 px-4 sm:px-6 lg:px-8;
+    @apply py-12 px-4 sm:py-16 sm:px-6 lg:py-20 lg:px-8;
+  }
+  
+  .section-padding-sm {
+    @apply py-8 px-4 sm:py-10 sm:px-6 lg:py-12 lg:px-8;
   }
   
   .container-custom {
-    @apply max-w-7xl mx-auto;
+    @apply max-w-7xl mx-auto w-full;
   }
   
+  .container-narrow {
+    @apply max-w-4xl mx-auto w-full;
+  }
+  
+  .container-wide {
+    @apply max-w-screen-2xl mx-auto w-full;
+  }
+  
+  /* Enhanced Typography */
   .text-gradient {
     @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
   }
   
+  .heading-xl {
+    @apply text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight;
+  }
+  
+  .heading-lg {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight;
+  }
+  
+  .heading-md {
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold leading-tight;
+  }
+  
+  .heading-sm {
+    @apply text-lg sm:text-xl lg:text-2xl font-semibold leading-tight;
+  }
+  
+  .body-lg {
+    @apply text-lg sm:text-xl leading-relaxed;
+  }
+  
+  .body-md {
+    @apply text-base sm:text-lg leading-relaxed;
+  }
+  
+  .body-sm {
+    @apply text-sm sm:text-base leading-relaxed;
+  }
+  
+  /* Enhanced Background Styles */
   .hero-gradient {
     @apply bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600;
   }
   
   .glass-effect {
-    @apply backdrop-blur-sm bg-white/90 border border-white/20;
+    @apply backdrop-blur-sm bg-white/90 border border-white/20 shadow-lg;
+  }
+  
+  /* Enhanced Grid Layouts */
+  .grid-responsive {
+    @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-8;
+  }
+  
+  .grid-responsive-2 {
+    @apply grid grid-cols-1 gap-6 lg:grid-cols-2 xl:gap-8;
+  }
+  
+  .grid-responsive-4 {
+    @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-8;
+  }
+  
+  /* Enhanced Spacing Utilities */
+  .space-y-content > * + * {
+    @apply mt-6 sm:mt-8;
+  }
+  
+  .space-y-section > * + * {
+    @apply mt-12 sm:mt-16 lg:mt-20;
   }
 }
 
