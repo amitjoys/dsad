@@ -596,5 +596,310 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user)):
     current_user["_id"] = str(current_user["_id"])
     return current_user
 
+# Admin Authentication Routes
+@app.post("/api/admin/auth/register", response_model=dict)
+async def register_admin(admin: AdminUserCreate):
+    """Register a new admin user"""
+    try:
+        # Check if admin already exists
+        existing_admin = await db.admins.find_one({"email": admin.email})
+        if existing_admin:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
+        # Hash password and create admin
+        hashed_password = get_password_hash(admin.password)
+        admin_dict = {
+            "id": str(uuid.uuid4()),
+            "email": admin.email,
+            "name": admin.name,
+            "hashed_password": hashed_password,
+            "is_admin": True,
+            "is_active": True,
+            "created_at": datetime.now()
+        }
+        
+        result = await db.admins.insert_one(admin_dict)
+        return {"message": "Admin registered successfully", "id": str(result.inserted_id)}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error registering admin: {str(e)}")
+
+@app.post("/api/admin/auth/login", response_model=Token)
+async def login_admin(form_data: OAuth2PasswordRequestForm = Depends()):
+    """Login admin user"""
+    try:
+        admin = await db.admins.find_one({"email": form_data.username})
+        if not admin or not verify_password(form_data.password, admin["hashed_password"]):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect email or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": admin["email"], "type": "admin"}, expires_delta=access_token_expires
+        )
+        return {"access_token": access_token, "token_type": "bearer"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error logging in admin: {str(e)}")
+
+@app.get("/api/admin/auth/me", response_model=dict)
+async def get_current_admin_info(current_admin: dict = Depends(get_current_admin)):
+    """Get current admin info"""
+    current_admin["_id"] = str(current_admin["_id"])
+    return current_admin
+
+# SEO Management Routes
+@app.post("/api/admin/seo/optimize", response_model=dict)
+async def optimize_content_seo(request: SEOOptimizationRequest, current_admin: dict = Depends(get_current_admin)):
+    """Optimize content for SEO using Groq API"""
+    try:
+        # Mock Groq API call
+        optimization_result = await mock_groq_seo_optimization(request.content, request.target_keywords)
+        
+        # Save SEO data to database
+        seo_data = SEOData(
+            page_path=request.page_path,
+            title=optimization_result["title_suggestions"][0],
+            description=optimization_result["description_suggestions"][0],
+            keywords=request.target_keywords,
+            meta_tags={
+                "title": optimization_result["title_suggestions"][0],
+                "description": optimization_result["description_suggestions"][0],
+                "keywords": ", ".join(request.target_keywords)
+            },
+            schema_markup=optimization_result["schema_markup"],
+            content_optimization=optimization_result
+        )
+        
+        # Update or insert SEO data
+        await db.seo_data.update_one(
+            {"page_path": request.page_path},
+            {"$set": seo_data.model_dump()},
+            upsert=True
+        )
+        
+        return optimization_result
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error optimizing SEO: {str(e)}")
+
+@app.get("/api/admin/seo/audit/{page_path:path}", response_model=dict)
+async def get_seo_audit(page_path: str, current_admin: dict = Depends(get_current_admin)):
+    """Get SEO audit for a specific page"""
+    try:
+        audit_result = await generate_seo_audit(page_path)
+        return audit_result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating SEO audit: {str(e)}")
+
+@app.get("/api/admin/seo/data", response_model=List[dict])
+async def get_all_seo_data(current_admin: dict = Depends(get_current_admin)):
+    """Get all SEO data"""
+    try:
+        seo_data = []
+        async for data in db.seo_data.find():
+            data["_id"] = str(data["_id"])
+            seo_data.append(data)
+        return seo_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching SEO data: {str(e)}")
+
+@app.get("/api/admin/seo/data/{page_path:path}", response_model=dict)
+async def get_seo_data(page_path: str, current_admin: dict = Depends(get_current_admin)):
+    """Get SEO data for a specific page"""
+    try:
+        seo_data = await db.seo_data.find_one({"page_path": page_path})
+        if not seo_data:
+            raise HTTPException(status_code=404, detail="SEO data not found")
+        seo_data["_id"] = str(seo_data["_id"])
+        return seo_data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching SEO data: {str(e)}")
+
+@app.put("/api/admin/seo/data/{page_path:path}", response_model=dict)
+async def update_seo_data(page_path: str, seo_data: SEOData, current_admin: dict = Depends(get_current_admin)):
+    """Update SEO data for a specific page"""
+    try:
+        seo_data.page_path = page_path
+        seo_data.updated_at = datetime.now()
+        
+        result = await db.seo_data.update_one(
+            {"page_path": page_path},
+            {"$set": seo_data.model_dump()},
+            upsert=True
+        )
+        
+        return {"message": "SEO data updated successfully", "modified_count": result.modified_count}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating SEO data: {str(e)}")
+
+# Service Pages Management Routes
+@app.post("/api/admin/services", response_model=dict)
+async def create_service_page(service: ServicePage, current_admin: dict = Depends(get_current_admin)):
+    """Create a new service page"""
+    try:
+        service_dict = service.model_dump()
+        result = await db.service_pages.insert_one(service_dict)
+        return {"message": "Service page created successfully", "id": str(result.inserted_id)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creating service page: {str(e)}")
+
+@app.get("/api/admin/services", response_model=List[dict])
+async def get_all_service_pages(current_admin: dict = Depends(get_current_admin)):
+    """Get all service pages"""
+    try:
+        services = []
+        async for service in db.service_pages.find():
+            service["_id"] = str(service["_id"])
+            services.append(service)
+        return services
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching service pages: {str(e)}")
+
+@app.get("/api/admin/services/{slug}", response_model=dict)
+async def get_service_page(slug: str, current_admin: dict = Depends(get_current_admin)):
+    """Get a specific service page"""
+    try:
+        service = await db.service_pages.find_one({"slug": slug})
+        if not service:
+            raise HTTPException(status_code=404, detail="Service page not found")
+        service["_id"] = str(service["_id"])
+        return service
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching service page: {str(e)}")
+
+@app.put("/api/admin/services/{slug}", response_model=dict)
+async def update_service_page(slug: str, service: ServicePage, current_admin: dict = Depends(get_current_admin)):
+    """Update a specific service page"""
+    try:
+        service.slug = slug
+        service.updated_at = datetime.now()
+        
+        result = await db.service_pages.update_one(
+            {"slug": slug},
+            {"$set": service.model_dump()}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Service page not found")
+        
+        return {"message": "Service page updated successfully", "modified_count": result.modified_count}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating service page: {str(e)}")
+
+@app.delete("/api/admin/services/{slug}", response_model=dict)
+async def delete_service_page(slug: str, current_admin: dict = Depends(get_current_admin)):
+    """Delete a specific service page"""
+    try:
+        result = await db.service_pages.delete_one({"slug": slug})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Service page not found")
+        return {"message": "Service page deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting service page: {str(e)}")
+
+# Public Service Pages Routes
+@app.get("/api/services", response_model=List[dict])
+async def get_public_service_pages():
+    """Get all active service pages (public access)"""
+    try:
+        services = []
+        async for service in db.service_pages.find({"is_active": True}):
+            service["_id"] = str(service["_id"])
+            services.append(service)
+        return services
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching service pages: {str(e)}")
+
+@app.get("/api/services/{slug}", response_model=dict)
+async def get_public_service_page(slug: str):
+    """Get a specific service page (public access)"""
+    try:
+        service = await db.service_pages.find_one({"slug": slug, "is_active": True})
+        if not service:
+            raise HTTPException(status_code=404, detail="Service page not found")
+        service["_id"] = str(service["_id"])
+        return service
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching service page: {str(e)}")
+
+# Admin Dashboard Statistics
+@app.get("/api/admin/dashboard/stats", response_model=dict)
+async def get_dashboard_stats(current_admin: dict = Depends(get_current_admin)):
+    """Get dashboard statistics"""
+    try:
+        # Get counts from various collections
+        total_users = await db.users.count_documents({})
+        total_contacts = await db.contacts.count_documents({})
+        total_projects = await db.projects.count_documents({})
+        total_calculations = await db.calculations.count_documents({})
+        total_services = await db.service_pages.count_documents({})
+        
+        # Get recent activity
+        recent_contacts = []
+        async for contact in db.contacts.find().sort("created_at", -1).limit(5):
+            contact["_id"] = str(contact["_id"])
+            recent_contacts.append(contact)
+        
+        recent_calculations = []
+        async for calc in db.calculations.find().sort("created_at", -1).limit(5):
+            calc["_id"] = str(calc["_id"])
+            recent_calculations.append(calc)
+        
+        return {
+            "total_users": total_users,
+            "total_contacts": total_contacts,
+            "total_projects": total_projects,
+            "total_calculations": total_calculations,
+            "total_services": total_services,
+            "recent_contacts": recent_contacts,
+            "recent_calculations": recent_calculations
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching dashboard stats: {str(e)}")
+
+# User Management Routes
+@app.get("/api/admin/users", response_model=List[dict])
+async def get_all_users(current_admin: dict = Depends(get_current_admin)):
+    """Get all users"""
+    try:
+        users = []
+        async for user in db.users.find():
+            user["_id"] = str(user["_id"])
+            # Don't return password hash
+            if "hashed_password" in user:
+                del user["hashed_password"]
+            users.append(user)
+        return users
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching users: {str(e)}")
+
+@app.get("/api/admin/contacts", response_model=List[dict])
+async def get_all_contacts(current_admin: dict = Depends(get_current_admin)):
+    """Get all contact form submissions"""
+    try:
+        contacts = []
+        async for contact in db.contacts.find():
+            contact["_id"] = str(contact["_id"])
+            contacts.append(contact)
+        return contacts
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching contacts: {str(e)}")
+
+@app.get("/api/admin/calculations", response_model=List[dict])
+async def get_all_calculations(current_admin: dict = Depends(get_current_admin)):
+    """Get all cost calculations"""
+    try:
+        calculations = []
+        async for calc in db.calculations.find():
+            calc["_id"] = str(calc["_id"])
+            calculations.append(calc)
+        return calculations
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching calculations: {str(e)}")
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
