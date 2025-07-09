@@ -120,6 +120,75 @@ const Services = () => {
     }
   ];
 
+  const specificServices = [
+    {
+      title: 'Painting Services',
+      description: 'Professional painting services for interior and exterior surfaces.',
+      icon: '🎨',
+      link: '/services/painting-services'
+    },
+    {
+      title: 'Plumbing Services',
+      description: 'Complete plumbing solutions for residential and commercial properties.',
+      icon: '🔧',
+      link: '/services/plumbing-services'
+    },
+    {
+      title: 'Window Fitment',
+      description: 'Professional window installation and replacement services.',
+      icon: '🪟',
+      link: '/services/window-fitment-services'
+    },
+    {
+      title: 'Door Fitment',
+      description: 'Expert door installation and replacement services.',
+      icon: '🚪',
+      link: '/services/door-fitment-services'
+    },
+    {
+      title: 'Tiles Fitment',
+      description: 'Professional tile installation for floors, walls, and bathrooms.',
+      icon: '⬜',
+      link: '/services/tiles-fitment-services'
+    },
+    {
+      title: 'Interior Design',
+      description: 'Complete interior design and decoration services.',
+      icon: '🏠',
+      link: '/services/interior-design-services'
+    },
+    {
+      title: 'Kitchen Styling',
+      description: 'Modern kitchen design and styling services.',
+      icon: '🍽️',
+      link: '/services/kitchen-styling-services'
+    },
+    {
+      title: 'Masonry Work',
+      description: 'Expert masonry and structural work services.',
+      icon: '🧱',
+      link: '/services/masonry-work-services'
+    },
+    {
+      title: 'Waterproofing',
+      description: 'Professional waterproofing solutions for all surfaces.',
+      icon: '💧',
+      link: '/services/water-proofing-services'
+    },
+    {
+      title: 'Grills & Guard Rails',
+      description: 'Safety grills and guard rail installation services.',
+      icon: '🛡️',
+      link: '/services/grills-guard-rail-fitment-services'
+    },
+    {
+      title: 'Rework Services',
+      description: 'Professional rework and renovation services.',
+      icon: '🔄',
+      link: '/services/rework-services'
+    }
+  ];
+
   return (
     <div className="Services">
       {/* Hero Section */}
