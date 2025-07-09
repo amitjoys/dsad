@@ -992,28 +992,57 @@ async def calculate_construction_cost(request: CalculatorRequest):
 
 @app.get("/api/calculator/materials", response_model=List[str])
 async def get_available_materials():
-    """Get list of available materials"""
+    """Get comprehensive list of available materials"""
     materials = [
-        "cement", "steel", "bricks", "sand", "tiles", "paint", 
-        "wood", "glass", "electrical", "plumbing"
+        # Basic Construction Materials
+        "cement", "steel", "bricks", "sand", "aggregate", "concrete_blocks",
+        
+        # Flooring Materials
+        "tiles", "marble", "granite", "ceramic_tiles", "vitrified_tiles",
+        
+        # Finishing Materials
+        "paint", "putty", "primer",
+        
+        # Structural Materials
+        "wood", "glass", "aluminum", "ms_sections",
+        
+        # Electrical Materials
+        "electrical_wire", "electrical_fittings", "switches_sockets", "mcb_db",
+        
+        # Plumbing Materials
+        "pvc_pipes", "cp_fittings", "sanitary_ware", "water_tank",
+        
+        # Roofing Materials
+        "roofing_tiles", "waterproofing", "insulation",
+        
+        # Others
+        "hardware", "adhesives"
     ]
     return materials
 
 @app.get("/api/calculator/labor-types", response_model=List[str])
 async def get_labor_types():
-    """Get list of available labor types"""
+    """Get comprehensive list of available labor types"""
     labor_types = [
-        "mason", "electrical", "plumbing", "painting", "tiling", 
-        "carpenter", "interior", "foundation", "grills", "glass_doors", "windows"
+        "mason", "electrical", "plumbing", "painting", "tiling", "carpenter", 
+        "interior", "foundation", "roofing", "waterproofing", "grills", 
+        "glass_doors", "windows", "false_ceiling", "aluminum_work", "steel_work",
+        "excavation", "concrete_work", "plastering", "flooring", "finishing",
+        "hvac", "landscaping"
     ]
     return labor_types
 
 @app.get("/api/calculator/locations", response_model=List[str])
 async def get_supported_locations():
-    """Get list of supported locations"""
+    """Get comprehensive list of supported locations"""
     locations = [
-        "Mumbai", "Pune", "Bangalore", "Delhi", "Hyderabad", 
-        "Chennai", "Kolkata", "Ahmedabad"
+        "Mumbai", "Pune", "Bangalore", "Delhi", "Noida", "Gurgaon", "Hyderabad", 
+        "Chennai", "Kolkata", "Ahmedabad", "Surat", "Lucknow", "Kanpur", "Nagpur",
+        "Indore", "Thane", "Bhopal", "Visakhapatnam", "Pimpri Chinchwad", "Patna",
+        "Vadodara", "Ghaziabad", "Ludhiana", "Agra", "Nashik", "Faridabad", "Meerut",
+        "Rajkot", "Kalyan Dombivli", "Vasai Virar", "Varanasi", "Srinagar", "Aurangabad",
+        "Dhanbad", "Amritsar", "Navi Mumbai", "Allahabad", "Howrah", "Ranchi", "Gwalior",
+        "Jabalpur", "Coimbatore"
     ]
     return locations
 
