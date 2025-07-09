@@ -913,40 +913,83 @@ async def create_project(project: Project):
 
 @app.post("/api/calculator/estimate", response_model=CalculatorResult)
 async def calculate_construction_cost(request: CalculatorRequest):
-    """Calculate construction costs based on requirements"""
+    """Enhanced construction cost calculation with comprehensive cost breakdown"""
     try:
-        # Get material prices
+        # Get enhanced material prices
         material_prices = await scrape_material_prices(request.location, request.materials)
         
-        # Calculate labor costs
-        labor_costs = await calculate_labor_costs(request.location, request.labor_types, request.area)
+        # Get granular material quantities
+        material_quantities = await calculate_granular_material_quantities(
+            request.area, request.model_dump(), request.materials
+        )
         
-        # Calculate total material costs
+        # Calculate enhanced labor costs
+        labor_costs = await calculate_labor_costs(
+            request.location, request.labor_types, request.area, request.model_dump()
+        )
+        
+        # Calculate transportation costs
+        transportation_costs = await calculate_transportation_costs(
+            request.location, request.area, request.materials, request.model_dump()
+        ) if request.include_transportation else {}
+        
+        # Calculate additional costs (permits, inspections, etc.)
+        additional_costs = await calculate_additional_costs(
+            request.location, request.area, request.model_dump()
+        )
+        
+        # Calculate total material costs with enhanced quantities
         total_material_cost = 0
         material_breakdown = {}
         
         for material, price_info in material_prices.items():
-            # Estimate material quantity based on area and type
-            quantity = request.area * 1.5  # Base multiplier
-            if material.lower() in ["cement", "steel"]:
-                quantity = request.area * 2.5
-            elif material.lower() in ["bricks"]:
-                quantity = request.area * 55  # ~55 bricks per sq ft
-            elif material.lower() in ["tiles", "paint"]:
-                quantity = request.area * 1.1
+            # Get enhanced quantity calculation
+            if material in material_quantities:
+                quantity = material_quantities[material]["total_quantity"]
+                breakdown_info = material_quantities[material]["breakdown"]
+            else:
+                # Fallback to basic calculation
+                quantity = request.area * 1.5
+                if material.lower() in ["cement"]:
+                    quantity = request.area * 0.8
+                elif material.lower() in ["steel"]:
+                    quantity = request.area * 8
+                elif material.lower() in ["bricks"]:
+                    quantity = request.area * 55
+                elif material.lower() in ["sand", "aggregate"]:
+                    quantity = request.area * 1.2
+                elif material.lower() in ["tiles", "marble", "granite"]:
+                    quantity = request.area * 1.1
+                elif material.lower() in ["paint"]:
+                    quantity = request.area * 0.15
+                
+                breakdown_info = {"standard": quantity}
             
-            material_cost = quantity * price_info["price"]
+            # Apply waste factor
+            waste_factor = price_info.get("waste_factor", 0.05)
+            adjusted_quantity = quantity * (1 + waste_factor)
+            
+            material_cost = adjusted_quantity * price_info["price"]
             total_material_cost += material_cost
             
             material_breakdown[material] = {
-                "quantity": round(quantity, 2),
+                "base_quantity": round(quantity, 2),
+                "waste_factor": waste_factor,
+                "adjusted_quantity": round(adjusted_quantity, 2),
                 "unit_price": price_info["price"],
                 "total_cost": round(material_cost, 2),
-                "unit": price_info["unit"]
+                "unit": price_info["unit"],
+                "breakdown": breakdown_info if material in material_quantities else {}
             }
         
         # Calculate total labor costs
         total_labor_cost = sum(labor["total_cost"] for labor in labor_costs.values())
+        
+        # Calculate total transportation costs
+        total_transportation_cost = sum(transport["total_cost"] for transport in transportation_costs.values())
+        
+        # Calculate total additional costs
+        total_additional_cost = sum(additional["total_cost"] for additional in additional_costs.values())
         
         # Quality level adjustments
         quality_multipliers = {
@@ -957,13 +1000,28 @@ async def calculate_construction_cost(request: CalculatorRequest):
         
         quality_multiplier = quality_multipliers.get(request.quality_level, 1.0)
         
-        # Calculate final totals
+        # Calculate subtotals
         adjusted_material_cost = total_material_cost * quality_multiplier
         adjusted_labor_cost = total_labor_cost * quality_multiplier
-        total_cost = adjusted_material_cost + adjusted_labor_cost
         
-        # Add overhead and profit (15%)
-        final_total = total_cost * 1.15
+        # Calculate base total (before overhead)
+        base_total = (adjusted_material_cost + adjusted_labor_cost + 
+                     total_transportation_cost + total_additional_cost)
+        
+        # Add overhead and profit (12% realistic margin)
+        overhead_profit_rate = 0.12
+        overhead_profit = base_total * overhead_profit_rate
+        
+        # Final total
+        final_total = base_total + overhead_profit
+        
+        # Calculate cost per sq ft
+        cost_per_sqft = final_total / request.area
+        
+        # Estimate timeline (in months)
+        timeline_months = max(2, round(request.area / 1000 * 3))
+        if request.building_height > 1:
+            timeline_months += request.building_height - 1
         
         result = CalculatorResult(
             total_cost=round(final_total, 2),
@@ -972,11 +1030,29 @@ async def calculate_construction_cost(request: CalculatorRequest):
             breakdown={
                 "materials_subtotal": round(adjusted_material_cost, 2),
                 "labor_subtotal": round(adjusted_labor_cost, 2),
+                "transportation_subtotal": round(total_transportation_cost, 2),
+                "additional_costs_subtotal": round(total_additional_cost, 2),
                 "quality_level": request.quality_level,
                 "quality_multiplier": quality_multiplier,
-                "overhead_profit": round(final_total - total_cost, 2),
+                "overhead_profit": round(overhead_profit, 2),
+                "overhead_rate": overhead_profit_rate,
                 "area": request.area,
-                "location": request.location
+                "location": request.location,
+                "cost_per_sqft": round(cost_per_sqft, 2),
+                "estimated_timeline_months": timeline_months,
+                "project_details": {
+                    "project_type": request.project_type,
+                    "foundation_type": request.foundation_type,
+                    "roof_type": request.roof_type,
+                    "wall_type": request.wall_type,
+                    "building_height": request.building_height,
+                    "electrical_complexity": request.electrical_complexity,
+                    "plumbing_complexity": request.plumbing_complexity,
+                    "parking_spaces": request.parking_spaces,
+                    "garden_area": request.garden_area
+                },
+                "transportation_costs": transportation_costs,
+                "additional_costs": additional_costs
             },
             location=request.location
         )
