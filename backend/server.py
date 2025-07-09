@@ -668,30 +668,30 @@ async def calculate_additional_costs(location: str, area: float, project_details
     """Calculate permits, inspections, and other additional costs"""
     additional_costs = {}
     
-    # Base rates for additional costs (2025 realistic pricing)
+    # Base rates for additional costs (2025 realistic pricing) - SIGNIFICANTLY REDUCED
     base_additional_rates = {
-        "building_permit": 25,  # per sq ft
-        "plan_approval": 15,    # per sq ft
-        "structural_approval": 20,  # per sq ft
-        "electrical_permit": 8,     # per sq ft
-        "plumbing_permit": 6,       # per sq ft
-        "fire_safety_approval": 12, # per sq ft
-        "environmental_clearance": 10,  # per sq ft
-        "site_survey": 5,           # per sq ft
-        "soil_testing": 3,          # per sq ft
-        "architect_fees": 35,       # per sq ft (5% of construction cost)
-        "structural_engineer": 25,  # per sq ft
-        "project_management": 20,   # per sq ft
-        "insurance": 8,             # per sq ft
-        "temporary_utilities": 12,  # per sq ft
-        "safety_equipment": 15,     # per sq ft
-        "tool_equipment_rental": 18, # per sq ft
-        "site_security": 10,        # per sq ft
-        "quality_inspection": 8,    # per sq ft
-        "final_inspection": 5,      # per sq ft
-        "occupancy_certificate": 3, # per sq ft
-        "utility_connections": 45,  # per sq ft
-        "contingency_fund": 50      # per sq ft (5% of total cost)
+        "building_permit": 5,       # per sq ft (reduced from 25)
+        "plan_approval": 3,         # per sq ft (reduced from 15)
+        "structural_approval": 4,   # per sq ft (reduced from 20)
+        "electrical_permit": 2,     # per sq ft (reduced from 8)
+        "plumbing_permit": 1,       # per sq ft (reduced from 6)
+        "fire_safety_approval": 2,  # per sq ft (reduced from 12)
+        "environmental_clearance": 2,  # per sq ft (reduced from 10)
+        "site_survey": 1,           # per sq ft (reduced from 5)
+        "soil_testing": 1,          # per sq ft (reduced from 3)
+        "architect_fees": 80,       # per sq ft (reduced from 35) - Fixed fee component
+        "structural_engineer": 50,  # per sq ft (reduced from 25) - Fixed fee component
+        "project_management": 40,   # per sq ft (reduced from 20) - Fixed fee component
+        "insurance": 2,             # per sq ft (reduced from 8)
+        "temporary_utilities": 3,   # per sq ft (reduced from 12)
+        "safety_equipment": 3,      # per sq ft (reduced from 15)
+        "tool_equipment_rental": 4, # per sq ft (reduced from 18)
+        "site_security": 2,         # per sq ft (reduced from 10)
+        "quality_inspection": 2,    # per sq ft (reduced from 8)
+        "final_inspection": 1,      # per sq ft (reduced from 5)
+        "occupancy_certificate": 1, # per sq ft (reduced from 3)
+        "utility_connections": 8,   # per sq ft (reduced from 45)
+        "contingency_fund": 15      # per sq ft (reduced from 50)
     }
     
     # Location-based multipliers for additional costs
