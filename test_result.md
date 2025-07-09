@@ -73,6 +73,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Calculator estimate endpoint (/api/calculator/estimate) is working correctly. Successfully processes POST requests with project details and returns accurate cost calculations including material costs, labor costs, and total cost. Quality level adjustments (standard, premium) are working as expected."
+      - working: true
+        agent: "testing"
+        comment: "Enhanced calculator estimate endpoint is working correctly with all new parameters. Successfully tested with complex parameters including foundation_type, roof_type, wall_type, electrical_complexity, plumbing_complexity, building_height, parking_spaces, garden_area, site_preparation, include_permits, and include_transportation. All cost calculations are accurate, transportation costs are included, additional costs are calculated, material quantities are realistic, labor costs reflect complexity multipliers, and final total calculation is accurate."
 
   - task: "Contact Form Endpoint"
     implemented: true
