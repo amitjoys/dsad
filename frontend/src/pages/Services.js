@@ -332,6 +332,42 @@ const Services = () => {
         </div>
       </section>
 
+      {/* Specific Services */}
+      <section className="section-padding">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">
+              Specialized Services
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Explore our specialized services for specific construction and renovation needs.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {specificServices.map((service, index) => (
+              <Link
+                key={index}
+                to={service.link}
+                className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 border border-gray-100"
+              >
+                <div className="text-4xl mb-4">{service.icon}</div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  {service.title}
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  {service.description}
+                </p>
+                <div className="flex items-center text-primary-600 text-sm font-semibold">
+                  Learn More
+                  <ArrowRightIcon className="h-4 w-4 ml-1" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Process Section */}
       <section className="section-padding">
         <div className="container-custom">
