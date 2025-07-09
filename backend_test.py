@@ -1265,6 +1265,14 @@ class TestConstructPuneAPI(unittest.TestCase):
         )
         print(f"Response status: {response.status_code}")
         
+        # Print error details if status code is not 200
+        if response.status_code != 200:
+            try:
+                error_details = response.json()
+                print(f"Error details: {json.dumps(error_details, indent=2)}")
+            except:
+                print(f"Error response text: {response.text}")
+        
         self.assertEqual(response.status_code, 200)
         result = response.json()
         
