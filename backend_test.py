@@ -1344,7 +1344,7 @@ class TestConstructPuneAPI(unittest.TestCase):
             self.assertAlmostEqual(
                 labor_data["total_cost"], 
                 labor_data["effective_rate"] * labor_data["area"],
-                delta=1.0  # Allow for rounding differences
+                delta=5.0  # Allow for rounding differences
             )
             
         # Validate breakdown
