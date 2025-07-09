@@ -699,12 +699,12 @@ async def calculate_transportation_costs(location: str, area: float, materials: 
     """Calculate transportation costs for materials and equipment"""
     transportation_costs = {}
     
-    # Base transportation rates per sq ft (2025 realistic pricing) - OPTIMIZED
+    # Base transportation rates per sq ft (2025 realistic pricing) - OPTIMIZED FOR REAL-WORLD COSTS
     base_transport_rates = {
-        "material_transport": 4,  # per sq ft for all materials (reduced from 8)
-        "equipment_transport": 2,  # per sq ft for equipment (reduced from 5)
-        "labor_transport": 1,  # per sq ft for labor transportation (reduced from 3)
-        "waste_disposal": 2  # per sq ft for construction waste disposal (reduced from 4)
+        "material_transport": 2,  # per sq ft for all materials (reduced from 4)
+        "equipment_transport": 1,  # per sq ft for equipment (reduced from 2)
+        "labor_transport": 0.5,  # per sq ft for labor transportation (reduced from 1)
+        "waste_disposal": 1  # per sq ft for construction waste disposal (reduced from 2)
     }
     
     # Distance-based multipliers (assuming city center as base)
