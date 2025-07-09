@@ -69,6 +69,19 @@ class CalculatorRequest(BaseModel):
     materials: List[str]
     labor_types: List[str]
     quality_level: str = "standard"  # standard, premium, luxury
+    foundation_type: str = "slab"  # slab, basement, crawl_space
+    roof_type: str = "flat"  # flat, sloped, tile, metal
+    wall_type: str = "brick"  # brick, concrete, wood_frame
+    electrical_complexity: str = "basic"  # basic, advanced, smart_home
+    plumbing_complexity: str = "basic"  # basic, premium, luxury
+    flooring_type: str = "basic"  # basic, premium, luxury
+    finishing_level: str = "standard"  # standard, premium, luxury
+    site_preparation: bool = True
+    include_permits: bool = True
+    include_transportation: bool = True
+    building_height: int = 1  # number of floors
+    parking_spaces: int = 0
+    garden_area: float = 0.0  # in sq ft
 
 class CalculatorResult(BaseModel):
     project_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
