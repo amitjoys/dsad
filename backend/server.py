@@ -545,31 +545,31 @@ async def calculate_labor_costs(location: str, labor_types: List[str], area: flo
     """Enhanced labor cost calculation with realistic 2025 rates"""
     labor_costs = {}
     
-    # Updated realistic labor rates per sq ft (2025 pricing) - OPTIMIZED
+    # Updated realistic labor rates per sq ft (2025 pricing) - OPTIMIZED FOR REAL-WORLD COSTS
     base_rates = {
-        "mason": {"rate": 25, "productivity": 1.0, "skill_level": "skilled"},     # reduced from 32
-        "electrical": {"rate": 35, "productivity": 0.8, "skill_level": "skilled"}, # reduced from 45
-        "plumbing": {"rate": 30, "productivity": 0.9, "skill_level": "skilled"},  # reduced from 38
-        "painting": {"rate": 15, "productivity": 1.2, "skill_level": "semi_skilled"}, # reduced from 20
-        "tiling": {"rate": 22, "productivity": 1.0, "skill_level": "skilled"},    # reduced from 28
-        "carpenter": {"rate": 45, "productivity": 0.7, "skill_level": "skilled"}, # reduced from 55
-        "interior": {"rate": 50, "productivity": 0.6, "skill_level": "skilled"},  # reduced from 65
-        "foundation": {"rate": 35, "productivity": 0.8, "skill_level": "skilled"}, # reduced from 50
-        "roofing": {"rate": 25, "productivity": 0.9, "skill_level": "skilled"},   # reduced from 35
-        "waterproofing": {"rate": 20, "productivity": 1.1, "skill_level": "skilled"}, # reduced from 25
-        "grills": {"rate": 200, "productivity": 0.5, "skill_level": "skilled"},   # reduced from 280
-        "glass_doors": {"rate": 250, "productivity": 0.4, "skill_level": "skilled"}, # reduced from 350
-        "windows": {"rate": 220, "productivity": 0.5, "skill_level": "skilled"},  # reduced from 300
-        "false_ceiling": {"rate": 35, "productivity": 0.8, "skill_level": "skilled"}, # reduced from 45
-        "aluminum_work": {"rate": 140, "productivity": 0.6, "skill_level": "skilled"}, # reduced from 180
-        "steel_work": {"rate": 65, "productivity": 0.7, "skill_level": "skilled"}, # reduced from 85
-        "excavation": {"rate": 12, "productivity": 1.5, "skill_level": "unskilled"}, # reduced from 15
-        "concrete_work": {"rate": 30, "productivity": 0.9, "skill_level": "skilled"}, # reduced from 40
-        "plastering": {"rate": 15, "productivity": 1.3, "skill_level": "semi_skilled"}, # reduced from 18
-        "flooring": {"rate": 25, "productivity": 1.0, "skill_level": "skilled"},  # reduced from 30
-        "finishing": {"rate": 20, "productivity": 1.1, "skill_level": "semi_skilled"}, # reduced from 25
-        "hvac": {"rate": 45, "productivity": 0.7, "skill_level": "skilled"},      # reduced from 60
-        "landscaping": {"rate": 25, "productivity": 0.8, "skill_level": "skilled"} # reduced from 35
+        "mason": {"rate": 20, "productivity": 1.0, "skill_level": "skilled"},     # reduced from 25
+        "electrical": {"rate": 30, "productivity": 0.8, "skill_level": "skilled"}, # reduced from 35
+        "plumbing": {"rate": 25, "productivity": 0.9, "skill_level": "skilled"},  # reduced from 30
+        "painting": {"rate": 12, "productivity": 1.2, "skill_level": "semi_skilled"}, # reduced from 15
+        "tiling": {"rate": 18, "productivity": 1.0, "skill_level": "skilled"},    # reduced from 22
+        "carpenter": {"rate": 35, "productivity": 0.7, "skill_level": "skilled"}, # reduced from 45
+        "interior": {"rate": 40, "productivity": 0.6, "skill_level": "skilled"},  # reduced from 50
+        "foundation": {"rate": 28, "productivity": 0.8, "skill_level": "skilled"}, # reduced from 35
+        "roofing": {"rate": 20, "productivity": 0.9, "skill_level": "skilled"},   # reduced from 25
+        "waterproofing": {"rate": 15, "productivity": 1.1, "skill_level": "skilled"}, # reduced from 20
+        "grills": {"rate": 150, "productivity": 0.5, "skill_level": "skilled"},   # reduced from 200
+        "glass_doors": {"rate": 200, "productivity": 0.4, "skill_level": "skilled"}, # reduced from 250
+        "windows": {"rate": 180, "productivity": 0.5, "skill_level": "skilled"},  # reduced from 220
+        "false_ceiling": {"rate": 28, "productivity": 0.8, "skill_level": "skilled"}, # reduced from 35
+        "aluminum_work": {"rate": 120, "productivity": 0.6, "skill_level": "skilled"}, # reduced from 140
+        "steel_work": {"rate": 55, "productivity": 0.7, "skill_level": "skilled"}, # reduced from 65
+        "excavation": {"rate": 10, "productivity": 1.5, "skill_level": "unskilled"}, # reduced from 12
+        "concrete_work": {"rate": 25, "productivity": 0.9, "skill_level": "skilled"}, # reduced from 30
+        "plastering": {"rate": 12, "productivity": 1.3, "skill_level": "semi_skilled"}, # reduced from 15
+        "flooring": {"rate": 20, "productivity": 1.0, "skill_level": "skilled"},  # reduced from 25
+        "finishing": {"rate": 15, "productivity": 1.1, "skill_level": "semi_skilled"}, # reduced from 20
+        "hvac": {"rate": 35, "productivity": 0.7, "skill_level": "skilled"},      # reduced from 45
+        "landscaping": {"rate": 20, "productivity": 0.8, "skill_level": "skilled"} # reduced from 25
     }
     
     # Enhanced location-based multipliers (2025 realistic rates)
