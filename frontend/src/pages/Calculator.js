@@ -119,12 +119,17 @@ const Calculator = () => {
         axios.get(`${backendUrl}/api/calculator/locations`)
       ]);
 
-      setAvailableMaterials(materialsRes.data);
-      setAvailableLaborTypes(laborRes.data);
-      setLocations(locationsRes.data);
+      // Ensure we always set arrays, even if API returns null or undefined
+      setAvailableMaterials(Array.isArray(materialsRes.data) ? materialsRes.data : []);
+      setAvailableLaborTypes(Array.isArray(laborRes.data) ? laborRes.data : []);
+      setLocations(Array.isArray(locationsRes.data) ? locationsRes.data : []);
     } catch (err) {
       console.error('Error fetching options:', err);
       setError('Failed to load calculator options. Please refresh the page.');
+      // Set empty arrays in case of error to prevent .map() errors
+      setAvailableMaterials([]);
+      setAvailableLaborTypes([]);
+      setLocations([]);
     }
   };
 
