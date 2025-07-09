@@ -782,8 +782,30 @@ async def calculate_additional_costs(location: str, area: float, project_details
     for cost_type in required_costs:
         if cost_type in base_additional_rates:
             base_rate = base_additional_rates[cost_type]
-            adjusted_rate = base_rate * multiplier * complexity_multiplier
-            total_cost = adjusted_rate * area
+            
+            # Fixed fees should not be multiplied by area - calculate as minimum fee
+            if cost_type in ["architect_fees", "structural_engineer", "project_management"]:
+                # Calculate as percentage of base construction cost or minimum fee
+                minimum_fee = base_rate * multiplier * complexity_multiplier
+                # Cap the total fee to make it realistic
+                if area > 1000:
+                    adjusted_rate = minimum_fee / area  # Reduce rate for larger areas
+                else:
+                    adjusted_rate = minimum_fee / 1000  # Fixed rate for smaller areas
+                
+                total_cost = adjusted_rate * area
+                # Cap maximum fees
+                if cost_type == "architect_fees":
+                    total_cost = min(total_cost, 150000)  # Cap at 1.5 lakhs
+                elif cost_type == "structural_engineer":
+                    total_cost = min(total_cost, 75000)   # Cap at 75k
+                elif cost_type == "project_management":
+                    total_cost = min(total_cost, 100000)  # Cap at 1 lakh
+                
+                adjusted_rate = total_cost / area
+            else:
+                adjusted_rate = base_rate * multiplier * complexity_multiplier
+                total_cost = adjusted_rate * area
             
             additional_costs[cost_type] = {
                 "rate_per_sqft": round(adjusted_rate, 2),
