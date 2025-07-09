@@ -1080,20 +1080,20 @@ async def calculate_construction_cost(request: CalculatorRequest):
                 quantity = material_quantities[material]["total_quantity"]
                 breakdown_info = material_quantities[material]["breakdown"]
             else:
-                # Fallback to basic calculation
-                quantity = request.area * 1.5
+                # Fallback to REALISTIC basic calculation - OPTIMIZED QUANTITIES
+                quantity = request.area * 0.5  # Reduced default multiplier
                 if material.lower() in ["cement"]:
-                    quantity = request.area * 0.8
+                    quantity = request.area * 0.4  # Reduced from 0.8 to 0.4 bags per sq ft
                 elif material.lower() in ["steel"]:
-                    quantity = request.area * 8
+                    quantity = request.area * 3.5  # Reduced from 8 to 3.5 kg per sq ft
                 elif material.lower() in ["bricks"]:
-                    quantity = request.area * 55
+                    quantity = request.area * 35   # Reduced from 55 to 35 pieces per sq ft
                 elif material.lower() in ["sand", "aggregate"]:
-                    quantity = request.area * 1.2
+                    quantity = request.area * 0.8  # Reduced from 1.2 to 0.8 cft per sq ft
                 elif material.lower() in ["tiles", "marble", "granite"]:
-                    quantity = request.area * 1.1
+                    quantity = request.area * 1.1  # Keep same - reasonable for flooring
                 elif material.lower() in ["paint"]:
-                    quantity = request.area * 0.15
+                    quantity = request.area * 0.08  # Reduced from 0.15 to 0.08 litre per sq ft
                 
                 breakdown_info = {"standard": quantity}
             
