@@ -49,7 +49,36 @@ const Calculator = () => {
     { value: 'villa', label: 'Villa/Luxury Home', icon: '🏡' },
     { value: 'apartment', label: 'Apartment', icon: '🏢' },
     { value: 'office', label: 'Office Space', icon: '💼' },
-    { value: 'warehouse', label: 'Warehouse', icon: '🏭' }
+    { value: 'warehouse', label: 'Warehouse', icon: '🏭' },
+    { value: 'industrial', label: 'Industrial Building', icon: '🏭' },
+    { value: 'retail', label: 'Retail Space', icon: '🏪' }
+  ];
+
+  const foundationTypes = [
+    { value: 'slab', label: 'Slab Foundation', description: 'Concrete slab on grade' },
+    { value: 'basement', label: 'Basement Foundation', description: 'Full basement construction' },
+    { value: 'crawl_space', label: 'Crawl Space', description: 'Raised foundation with crawl space' }
+  ];
+
+  const roofTypes = [
+    { value: 'flat', label: 'Flat Roof', description: 'Standard flat concrete roof' },
+    { value: 'sloped', label: 'Sloped Roof', description: 'Sloped roof with tiles' },
+    { value: 'tile', label: 'Tile Roof', description: 'Clay or concrete tiles' },
+    { value: 'metal', label: 'Metal Roof', description: 'Metal roofing sheets' }
+  ];
+
+  const wallTypes = [
+    { value: 'brick', label: 'Brick Wall', description: 'Traditional brick masonry' },
+    { value: 'concrete', label: 'Concrete Wall', description: 'RCC concrete walls' },
+    { value: 'wood_frame', label: 'Wood Frame', description: 'Wooden frame construction' }
+  ];
+
+  const complexityLevels = [
+    { value: 'basic', label: 'Basic', description: 'Standard installation' },
+    { value: 'advanced', label: 'Advanced', description: 'Premium features' },
+    { value: 'smart_home', label: 'Smart Home', description: 'Smart automation' },
+    { value: 'premium', label: 'Premium', description: 'High-end fixtures' },
+    { value: 'luxury', label: 'Luxury', description: 'Luxury grade materials' }
   ];
 
   const qualityLevels = [
