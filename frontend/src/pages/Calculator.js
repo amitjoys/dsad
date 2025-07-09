@@ -171,6 +171,18 @@ const Calculator = () => {
       setError('Please select at least one labor type.');
       return false;
     }
+    if (formData.building_height < 1 || formData.building_height > 10) {
+      setError('Building height must be between 1 and 10 floors.');
+      return false;
+    }
+    if (formData.parking_spaces < 0) {
+      setError('Parking spaces cannot be negative.');
+      return false;
+    }
+    if (formData.garden_area < 0) {
+      setError('Garden area cannot be negative.');
+      return false;
+    }
     return true;
   };
 
