@@ -337,7 +337,7 @@ const Calculator = () => {
                       className="calculator-select pr-10"
                       required
                     >
-                      {locations.map(location => (
+                      {(locations || []).map(location => (
                         <option key={location.toLowerCase().replace(/\s+/g, '_')} value={location.toLowerCase().replace(/\s+/g, '_')}>
                           {location}
                         </option>
