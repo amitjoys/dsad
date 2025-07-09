@@ -585,7 +585,294 @@ async def calculate_labor_costs(location: str, labor_types: List[str], area: flo
                 "skill_level": labor_info["skill_level"]
             }
     
-    return labor_costs
+async def calculate_transportation_costs(location: str, area: float, materials: List[str], project_details: dict):
+    """Calculate transportation costs for materials and equipment"""
+    transportation_costs = {}
+    
+    # Base transportation rates per sq ft (2025 realistic pricing)
+    base_transport_rates = {
+        "material_transport": 8,  # per sq ft for all materials
+        "equipment_transport": 5,  # per sq ft for equipment
+        "labor_transport": 3,  # per sq ft for labor transportation
+        "waste_disposal": 4  # per sq ft for construction waste disposal
+    }
+    
+    # Distance-based multipliers (assuming city center as base)
+    location_transport_multipliers = {
+        "mumbai": 1.6,
+        "pune": 1.0,
+        "bangalore": 1.3,
+        "delhi": 1.5,
+        "noida": 1.4,
+        "gurgaon": 1.5,
+        "hyderabad": 1.1,
+        "chennai": 1.2,
+        "kolkata": 1.0,
+        "ahmedabad": 1.0,
+        "surat": 0.9,
+        "lucknow": 0.9,
+        "kanpur": 0.8,
+        "nagpur": 0.9,
+        "indore": 0.9,
+        "thane": 1.5,
+        "bhopal": 0.9,
+        "visakhapatnam": 1.0,
+        "pimpri_chinchwad": 1.0,
+        "patna": 0.8,
+        "vadodara": 0.9,
+        "ghaziabad": 1.3,
+        "ludhiana": 1.0,
+        "agra": 0.8,
+        "nashik": 0.9,
+        "faridabad": 1.4,
+        "meerut": 0.9,
+        "rajkot": 0.9,
+        "kalyan_dombivli": 1.4,
+        "vasai_virar": 1.4,
+        "varanasi": 0.8,
+        "srinagar": 1.2,
+        "aurangabad": 0.9,
+        "dhanbad": 0.8,
+        "amritsar": 1.0,
+        "navi_mumbai": 1.5,
+        "allahabad": 0.8,
+        "howrah": 0.9,
+        "ranchi": 0.9,
+        "gwalior": 0.8,
+        "jabalpur": 0.8,
+        "coimbatore": 1.0
+    }
+    
+    # Project complexity adjustments
+    height_multiplier = 1.0 + (project_details.get("building_height", 1) - 1) * 0.2
+    
+    multiplier = location_transport_multipliers.get(location.lower(), 1.0)
+    
+    for transport_type, base_rate in base_transport_rates.items():
+        adjusted_rate = base_rate * multiplier * height_multiplier
+        total_cost = adjusted_rate * area
+        
+        transportation_costs[transport_type] = {
+            "rate_per_sqft": round(adjusted_rate, 2),
+            "total_cost": round(total_cost, 2),
+            "area": area,
+            "location": location,
+            "height_multiplier": height_multiplier
+        }
+    
+    return transportation_costs
+
+async def calculate_additional_costs(location: str, area: float, project_details: dict):
+    """Calculate permits, inspections, and other additional costs"""
+    additional_costs = {}
+    
+    # Base rates for additional costs (2025 realistic pricing)
+    base_additional_rates = {
+        "building_permit": 25,  # per sq ft
+        "plan_approval": 15,    # per sq ft
+        "structural_approval": 20,  # per sq ft
+        "electrical_permit": 8,     # per sq ft
+        "plumbing_permit": 6,       # per sq ft
+        "fire_safety_approval": 12, # per sq ft
+        "environmental_clearance": 10,  # per sq ft
+        "site_survey": 5,           # per sq ft
+        "soil_testing": 3,          # per sq ft
+        "architect_fees": 35,       # per sq ft (5% of construction cost)
+        "structural_engineer": 25,  # per sq ft
+        "project_management": 20,   # per sq ft
+        "insurance": 8,             # per sq ft
+        "temporary_utilities": 12,  # per sq ft
+        "safety_equipment": 15,     # per sq ft
+        "tool_equipment_rental": 18, # per sq ft
+        "site_security": 10,        # per sq ft
+        "quality_inspection": 8,    # per sq ft
+        "final_inspection": 5,      # per sq ft
+        "occupancy_certificate": 3, # per sq ft
+        "utility_connections": 45,  # per sq ft
+        "contingency_fund": 50      # per sq ft (5% of total cost)
+    }
+    
+    # Location-based multipliers for additional costs
+    location_additional_multipliers = {
+        "mumbai": 1.8,
+        "pune": 1.0,
+        "bangalore": 1.4,
+        "delhi": 1.6,
+        "noida": 1.5,
+        "gurgaon": 1.7,
+        "hyderabad": 1.2,
+        "chennai": 1.3,
+        "kolkata": 1.0,
+        "ahmedabad": 1.1,
+        "surat": 1.0,
+        "lucknow": 0.9,
+        "kanpur": 0.8,
+        "nagpur": 0.9,
+        "indore": 0.9,
+        "thane": 1.7,
+        "bhopal": 0.9,
+        "visakhapatnam": 1.0,
+        "pimpri_chinchwad": 1.0,
+        "patna": 0.8,
+        "vadodara": 1.0,
+        "ghaziabad": 1.4,
+        "ludhiana": 1.0,
+        "agra": 0.8,
+        "nashik": 0.9,
+        "faridabad": 1.5,
+        "meerut": 0.9,
+        "rajkot": 0.9,
+        "kalyan_dombivli": 1.6,
+        "vasai_virar": 1.6,
+        "varanasi": 0.8,
+        "srinagar": 1.1,
+        "aurangabad": 0.9,
+        "dhanbad": 0.8,
+        "amritsar": 1.0,
+        "navi_mumbai": 1.7,
+        "allahabad": 0.8,
+        "howrah": 0.9,
+        "ranchi": 0.9,
+        "gwalior": 0.8,
+        "jabalpur": 0.8,
+        "coimbatore": 1.0
+    }
+    
+    # Project complexity adjustments
+    complexity_multiplier = 1.0
+    if project_details.get("building_height", 1) > 2:
+        complexity_multiplier += 0.3
+    if project_details.get("electrical_complexity") == "smart_home":
+        complexity_multiplier += 0.2
+    if project_details.get("plumbing_complexity") == "luxury":
+        complexity_multiplier += 0.15
+    
+    multiplier = location_additional_multipliers.get(location.lower(), 1.0)
+    
+    # Filter costs based on project requirements
+    required_costs = []
+    
+    # Always required
+    required_costs.extend([
+        "building_permit", "plan_approval", "architect_fees", "project_management",
+        "insurance", "safety_equipment", "tool_equipment_rental", "quality_inspection",
+        "final_inspection", "occupancy_certificate", "contingency_fund"
+    ])
+    
+    # Conditional costs
+    if project_details.get("include_permits", True):
+        required_costs.extend([
+            "structural_approval", "electrical_permit", "plumbing_permit",
+            "fire_safety_approval", "environmental_clearance"
+        ])
+    
+    if project_details.get("site_preparation", True):
+        required_costs.extend([
+            "site_survey", "soil_testing", "temporary_utilities", "site_security"
+        ])
+    
+    if project_details.get("building_height", 1) > 1:
+        required_costs.append("structural_engineer")
+    
+    if area > 5000:  # Large projects
+        required_costs.append("utility_connections")
+    
+    for cost_type in required_costs:
+        if cost_type in base_additional_rates:
+            base_rate = base_additional_rates[cost_type]
+            adjusted_rate = base_rate * multiplier * complexity_multiplier
+            total_cost = adjusted_rate * area
+            
+            additional_costs[cost_type] = {
+                "rate_per_sqft": round(adjusted_rate, 2),
+                "total_cost": round(total_cost, 2),
+                "area": area,
+                "location": location,
+                "complexity_multiplier": complexity_multiplier
+            }
+    
+    return additional_costs
+
+async def calculate_granular_material_quantities(area: float, project_details: dict, materials: List[str]):
+    """Calculate detailed material quantities based on construction practices"""
+    material_quantities = {}
+    
+    # Detailed quantity calculations per sq ft
+    quantity_calculations = {
+        "cement": {
+            "foundation": 0.8,  # bags per sq ft
+            "walls": 0.6,       # bags per sq ft
+            "plastering": 0.2,  # bags per sq ft
+            "flooring": 0.3     # bags per sq ft
+        },
+        "steel": {
+            "foundation": 8,    # kg per sq ft
+            "structure": 6,     # kg per sq ft
+            "reinforcement": 4   # kg per sq ft
+        },
+        "bricks": {
+            "walls": 55,        # pieces per sq ft (4.5" wall)
+            "partition": 40      # pieces per sq ft (3" wall)
+        },
+        "sand": {
+            "foundation": 1.5,  # cft per sq ft
+            "plastering": 0.8,  # cft per sq ft
+            "flooring": 0.4     # cft per sq ft
+        },
+        "aggregate": {
+            "foundation": 2.0,  # cft per sq ft
+            "concrete": 1.2     # cft per sq ft
+        }
+    }
+    
+    # Building height multiplier
+    height_multiplier = project_details.get("building_height", 1)
+    
+    # Foundation type multiplier
+    foundation_multipliers = {
+        "slab": 1.0,
+        "basement": 1.8,
+        "crawl_space": 1.3
+    }
+    foundation_mult = foundation_multipliers.get(project_details.get("foundation_type", "slab"), 1.0)
+    
+    # Wall type multiplier
+    wall_multipliers = {
+        "brick": 1.0,
+        "concrete": 1.2,
+        "wood_frame": 0.6
+    }
+    wall_mult = wall_multipliers.get(project_details.get("wall_type", "brick"), 1.0)
+    
+    for material in materials:
+        if material.lower() in quantity_calculations:
+            quantities = quantity_calculations[material.lower()]
+            total_quantity = 0
+            
+            for component, base_qty in quantities.items():
+                component_qty = base_qty * area
+                
+                # Apply multipliers based on component
+                if component in ["foundation"]:
+                    component_qty *= foundation_mult
+                elif component in ["walls", "partition"]:
+                    component_qty *= wall_mult * height_multiplier
+                elif component in ["structure", "reinforcement"]:
+                    component_qty *= height_multiplier
+                
+                total_quantity += component_qty
+            
+            material_quantities[material] = {
+                "total_quantity": round(total_quantity, 2),
+                "breakdown": {comp: round(qty * area, 2) for comp, qty in quantities.items()},
+                "multipliers_applied": {
+                    "height": height_multiplier,
+                    "foundation": foundation_mult,
+                    "wall": wall_mult
+                }
+            }
+    
+    return material_quantities
 
 # API Routes
 @app.get("/api/")
