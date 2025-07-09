@@ -433,50 +433,156 @@ async def scrape_material_prices(location: str, materials: List[str]):
     
     return prices
 
-async def calculate_labor_costs(location: str, labor_types: List[str], area: float):
-    """Calculate labor costs based on location and work type"""
+async def calculate_labor_costs(location: str, labor_types: List[str], area: float, project_details: dict):
+    """Enhanced labor cost calculation with realistic 2025 rates"""
     labor_costs = {}
     
-    # Base labor rates per sq ft
+    # Updated realistic labor rates per sq ft (2025 pricing)
     base_rates = {
-        "mason": 25,
-        "electrical": 35,
-        "plumbing": 30,
-        "painting": 15,
-        "tiling": 20,
-        "carpenter": 40,
-        "interior": 50,
-        "foundation": 45,
-        "grills": 200,  # per sq ft
-        "glass_doors": 300,  # per sq ft
-        "windows": 250  # per sq ft
+        "mason": {"rate": 32, "productivity": 1.0, "skill_level": "skilled"},
+        "electrical": {"rate": 45, "productivity": 0.8, "skill_level": "skilled"},
+        "plumbing": {"rate": 38, "productivity": 0.9, "skill_level": "skilled"},
+        "painting": {"rate": 20, "productivity": 1.2, "skill_level": "semi_skilled"},
+        "tiling": {"rate": 28, "productivity": 1.0, "skill_level": "skilled"},
+        "carpenter": {"rate": 55, "productivity": 0.7, "skill_level": "skilled"},
+        "interior": {"rate": 65, "productivity": 0.6, "skill_level": "skilled"},
+        "foundation": {"rate": 50, "productivity": 0.8, "skill_level": "skilled"},
+        "roofing": {"rate": 35, "productivity": 0.9, "skill_level": "skilled"},
+        "waterproofing": {"rate": 25, "productivity": 1.1, "skill_level": "skilled"},
+        "grills": {"rate": 280, "productivity": 0.5, "skill_level": "skilled"},
+        "glass_doors": {"rate": 350, "productivity": 0.4, "skill_level": "skilled"},
+        "windows": {"rate": 300, "productivity": 0.5, "skill_level": "skilled"},
+        "false_ceiling": {"rate": 45, "productivity": 0.8, "skill_level": "skilled"},
+        "aluminum_work": {"rate": 180, "productivity": 0.6, "skill_level": "skilled"},
+        "steel_work": {"rate": 85, "productivity": 0.7, "skill_level": "skilled"},
+        "excavation": {"rate": 15, "productivity": 1.5, "skill_level": "unskilled"},
+        "concrete_work": {"rate": 40, "productivity": 0.9, "skill_level": "skilled"},
+        "plastering": {"rate": 18, "productivity": 1.3, "skill_level": "semi_skilled"},
+        "flooring": {"rate": 30, "productivity": 1.0, "skill_level": "skilled"},
+        "finishing": {"rate": 25, "productivity": 1.1, "skill_level": "semi_skilled"},
+        "hvac": {"rate": 60, "productivity": 0.7, "skill_level": "skilled"},
+        "landscaping": {"rate": 35, "productivity": 0.8, "skill_level": "skilled"}
     }
     
-    # Location-based multipliers
+    # Enhanced location-based multipliers (2025 realistic rates)
     location_multipliers = {
-        "mumbai": 1.4,
+        "mumbai": 1.55,
         "pune": 1.0,
-        "bangalore": 1.2,
-        "delhi": 1.3,
-        "hyderabad": 0.9,
-        "chennai": 1.0,
-        "kolkata": 0.8,
-        "ahmedabad": 0.85
+        "bangalore": 1.25,
+        "delhi": 1.45,
+        "noida": 1.35,
+        "gurgaon": 1.50,
+        "hyderabad": 0.95,
+        "chennai": 1.10,
+        "kolkata": 0.85,
+        "ahmedabad": 0.90,
+        "surat": 0.88,
+        "lucknow": 0.85,
+        "kanpur": 0.80,
+        "nagpur": 0.90,
+        "indore": 0.88,
+        "thane": 1.45,
+        "bhopal": 0.85,
+        "visakhapatnam": 0.90,
+        "pimpri_chinchwad": 0.98,
+        "patna": 0.78,
+        "vadodara": 0.92,
+        "ghaziabad": 1.30,
+        "ludhiana": 0.95,
+        "agra": 0.83,
+        "nashik": 0.95,
+        "faridabad": 1.32,
+        "meerut": 0.88,
+        "rajkot": 0.88,
+        "kalyan_dombivli": 1.40,
+        "vasai_virar": 1.35,
+        "varanasi": 0.80,
+        "srinagar": 0.95,
+        "aurangabad": 0.88,
+        "dhanbad": 0.83,
+        "amritsar": 0.90,
+        "navi_mumbai": 1.48,
+        "allahabad": 0.78,
+        "howrah": 0.85,
+        "ranchi": 0.85,
+        "gwalior": 0.83,
+        "jabalpur": 0.80,
+        "coimbatore": 0.95
+    }
+    
+    # Project complexity multipliers
+    complexity_multipliers = {
+        "foundation_type": {
+            "slab": 1.0,
+            "basement": 1.4,
+            "crawl_space": 1.2
+        },
+        "building_height": {
+            1: 1.0,
+            2: 1.2,
+            3: 1.4,
+            4: 1.6
+        },
+        "electrical_complexity": {
+            "basic": 1.0,
+            "advanced": 1.3,
+            "smart_home": 1.8
+        },
+        "plumbing_complexity": {
+            "basic": 1.0,
+            "premium": 1.4,
+            "luxury": 1.8
+        }
     }
     
     multiplier = location_multipliers.get(location.lower(), 1.0)
     
+    # Height multiplier
+    height_multiplier = complexity_multipliers["building_height"].get(project_details.get("building_height", 1), 1.0)
+    
     for labor_type in labor_types:
         if labor_type.lower() in base_rates:
-            base_rate = base_rates[labor_type.lower()]
+            labor_info = base_rates[labor_type.lower()]
+            base_rate = labor_info["rate"]
+            productivity = labor_info["productivity"]
+            
+            # Apply location multiplier
             adjusted_rate = base_rate * multiplier
-            total_cost = adjusted_rate * area
+            
+            # Apply complexity multipliers based on labor type
+            if labor_type.lower() == "electrical":
+                complexity_mult = complexity_multipliers["electrical_complexity"].get(
+                    project_details.get("electrical_complexity", "basic"), 1.0
+                )
+                adjusted_rate *= complexity_mult
+            elif labor_type.lower() == "plumbing":
+                complexity_mult = complexity_multipliers["plumbing_complexity"].get(
+                    project_details.get("plumbing_complexity", "basic"), 1.0
+                )
+                adjusted_rate *= complexity_mult
+            elif labor_type.lower() == "foundation":
+                complexity_mult = complexity_multipliers["foundation_type"].get(
+                    project_details.get("foundation_type", "slab"), 1.0
+                )
+                adjusted_rate *= complexity_mult
+            
+            # Apply height multiplier
+            adjusted_rate *= height_multiplier
+            
+            # Apply productivity factor
+            effective_rate = adjusted_rate / productivity
+            
+            # Calculate total cost
+            total_cost = effective_rate * area
             
             labor_costs[labor_type] = {
                 "rate_per_sqft": round(adjusted_rate, 2),
+                "effective_rate": round(effective_rate, 2),
+                "productivity_factor": productivity,
                 "total_cost": round(total_cost, 2),
                 "area": area,
-                "location": location
+                "location": location,
+                "skill_level": labor_info["skill_level"]
             }
     
     return labor_costs
