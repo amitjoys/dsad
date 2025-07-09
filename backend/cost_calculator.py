@@ -610,28 +610,28 @@ async def calculate_granular_material_quantities(area: float, project_details: d
     # Detailed quantity calculations per sq ft - OPTIMIZED for realistic consumption
     quantity_calculations = {
         "cement": {
-            "foundation": 0.5,
-            "walls": 0.3,
-            "plastering": 0.1,
-            "flooring": 0.2
+            "foundation": 0.15,  # Reduced from 0.5
+            "walls": 0.1,        # Reduced from 0.3
+            "plastering": 0.05,  # Reduced from 0.1
+            "flooring": 0.08     # Reduced from 0.2
         },
         "steel": {
-            "foundation": 4,
-            "structure": 3,
-            "reinforcement": 2
+            "foundation": 1.5,   # Reduced from 4
+            "structure": 1.0,    # Reduced from 3
+            "reinforcement": 0.5 # Reduced from 2
         },
         "bricks": {
-            "walls": 40,
-            "partition": 30
+            "walls": 25,         # Reduced from 40
+            "partition": 15      # Reduced from 30
         },
         "sand": {
-            "foundation": 0.8,
-            "plastering": 0.5,
-            "flooring": 0.3
+            "foundation": 0.3,   # Reduced from 0.8
+            "plastering": 0.2,   # Reduced from 0.5
+            "flooring": 0.15     # Reduced from 0.3
         },
         "aggregate": {
-            "foundation": 1.0,
-            "concrete": 0.8
+            "foundation": 0.4,   # Reduced from 1.0
+            "concrete": 0.3      # Reduced from 0.8
         }
     }
     
