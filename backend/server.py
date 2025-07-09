@@ -2351,3 +2351,6 @@ async def initialize_service_pages():
 @app.on_event("startup")
 async def startup_event():
     await initialize_service_pages()
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8001)
