@@ -16,10 +16,16 @@ router = APIRouter()
 async def calculate_construction_cost(request: CalculatorRequest):
     """Enhanced construction cost calculation with comprehensive cost breakdown"""
     try:
+        # Import the optimization function
+        from cost_calculator import optimize_material_selection
+        
+        # Optimize material selection to avoid duplicates and unrealistic quantities
+        optimized_materials = await optimize_material_selection(request.materials, request.area)
+        
         # Get enhanced material prices
         material_prices = await scrape_material_prices(request.location, request.materials)
         
-        # Get granular material quantities
+        # Get granular material quantities using optimized materials
         material_quantities = await calculate_granular_material_quantities(
             request.area, request.model_dump(), request.materials
         )
