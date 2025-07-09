@@ -594,7 +594,7 @@ const Calculator = () => {
                   ))}
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  {formData.materials.length} of {availableMaterials.length} materials selected
+                  {formData.materials.length} of {(availableMaterials || []).length} materials selected
                 </p>
               </div>
 
