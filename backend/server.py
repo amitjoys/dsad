@@ -322,6 +322,114 @@ async def generate_seo_audit(page_path: str):
         ]
     }
 
+async def optimize_material_selection(materials: List[str], area: float):
+    """Optimize material selection to handle overlaps and realistic usage"""
+    optimized = {}
+    
+    # Material categories and their priorities (higher number = higher priority)
+    material_categories = {
+        # Flooring materials (mutually exclusive)
+        "flooring": {
+            "materials": ["tiles", "marble", "granite", "ceramic_tiles", "vitrified_tiles"],
+            "max_usage": area * 1.1,  # Only need flooring for the area + waste
+            "priority": {"marble": 3, "granite": 2, "vitrified_tiles": 2, "tiles": 1, "ceramic_tiles": 1}
+        },
+        # Wall materials (can overlap but with limits)
+        "walls": {
+            "materials": ["bricks", "concrete_blocks"],
+            "max_usage": area * 0.8,  # Walls don't cover full area
+            "priority": {"concrete_blocks": 2, "bricks": 1}
+        },
+        # Finishing materials (can overlap)
+        "finishing": {
+            "materials": ["paint", "putty", "primer"],
+            "max_usage": area * 2.5,  # Interior + exterior surfaces
+            "priority": {"paint": 3, "primer": 2, "putty": 1}
+        },
+        # Structural materials (essential)
+        "structural": {
+            "materials": ["cement", "steel", "sand", "aggregate"],
+            "max_usage": None,  # No limit, essential materials
+            "priority": {"cement": 3, "steel": 3, "sand": 2, "aggregate": 2}
+        },
+        # Specialty materials (selective usage)
+        "specialty": {
+            "materials": ["wood", "glass", "aluminum", "ms_sections"],
+            "max_usage": area * 0.3,  # Limited usage
+            "priority": {"wood": 2, "aluminum": 2, "glass": 1, "ms_sections": 1}
+        }
+    }
+    
+    # Base quantities per sq ft for different materials
+    base_quantities = {
+        "cement": 0.4,
+        "steel": 3,
+        "bricks": 35,
+        "sand": 0.8,
+        "aggregate": 0.6,
+        "tiles": 1.1,
+        "marble": 1.1,
+        "granite": 1.1,
+        "ceramic_tiles": 1.1,
+        "vitrified_tiles": 1.1,
+        "paint": 0.08,
+        "putty": 0.05,
+        "primer": 0.03,
+        "wood": 0.2,
+        "glass": 0.1,
+        "aluminum": 0.15,
+        "ms_sections": 0.1,
+        "concrete_blocks": 30,
+        "electrical_wire": 0.5,
+        "electrical_fittings": 0.08,
+        "switches_sockets": 0.06,
+        "pvc_pipes": 0.3,
+        "cp_fittings": 0.01,
+        "sanitary_ware": 0.008,
+        "roofing_tiles": 1.1,
+        "waterproofing": 1.0,
+        "insulation": 0.8,
+        "hardware": 0.1,
+        "adhesives": 0.05
+    }
+    
+    # Process each material
+    for material in materials:
+        material_lower = material.lower()
+        
+        # Find which category this material belongs to
+        category_info = None
+        for cat_name, cat_data in material_categories.items():
+            if material_lower in cat_data["materials"]:
+                category_info = cat_data
+                break
+        
+        # Calculate base quantity
+        base_qty = base_quantities.get(material_lower, 0.5) * area
+        
+        # Apply category-specific optimization
+        if category_info:
+            # For flooring materials, only use the highest priority one
+            if cat_name == "flooring":
+                selected_flooring = max(
+                    [m for m in materials if m.lower() in category_info["materials"]], 
+                    key=lambda x: category_info["priority"].get(x.lower(), 0)
+                )
+                if material.lower() != selected_flooring.lower():
+                    continue  # Skip non-selected flooring materials
+                base_qty = min(base_qty, category_info["max_usage"])
+            
+            # For other categories, apply max usage limits
+            elif category_info["max_usage"]:
+                base_qty = min(base_qty, category_info["max_usage"] * 0.5)  # Reduce by 50%
+        
+        optimized[material] = {
+            "quantity": base_qty,
+            "category": cat_name if category_info else "other"
+        }
+    
+    return optimized
+
 # Price scraping functions
 async def scrape_material_prices(location: str, materials: List[str]):
     """Enhanced material prices with more realistic 2025 pricing"""
