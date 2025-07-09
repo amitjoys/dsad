@@ -625,7 +625,7 @@ const Calculator = () => {
                   ))}
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  {formData.labor_types.length} of {availableLaborTypes.length} labor types selected
+                  {formData.labor_types.length} of {(availableLaborTypes || []).length} labor types selected
                 </p>
               </div>
 
