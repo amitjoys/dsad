@@ -1140,8 +1140,8 @@ async def calculate_construction_cost(request: CalculatorRequest):
         base_total = (adjusted_material_cost + adjusted_labor_cost + 
                      total_transportation_cost + total_additional_cost)
         
-        # Add overhead and profit (12% realistic margin)
-        overhead_profit_rate = 0.12
+        # Add overhead and profit (8% realistic margin for competitive pricing)
+        overhead_profit_rate = 0.08
         overhead_profit = base_total * overhead_profit_rate
         
         # Final total
