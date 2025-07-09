@@ -576,7 +576,7 @@ const Calculator = () => {
                     onClick={() => handleSelectAll('materials', availableMaterials)}
                     className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 border border-primary-200 rounded-lg hover:bg-primary-100 transition-colors"
                   >
-                    {availableMaterials.every(material => formData.materials.includes(material)) ? 'Deselect All' : 'Select All'}
+                    {(availableMaterials || []).every(material => formData.materials.includes(material)) ? 'Deselect All' : 'Select All'}
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
