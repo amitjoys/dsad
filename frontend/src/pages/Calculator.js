@@ -155,11 +155,12 @@ const Calculator = () => {
 
   const handleSelectAll = (field, allOptions) => {
     const currentSelection = formData[field];
-    const allSelected = allOptions.every(option => currentSelection.includes(option));
+    const safeAllOptions = allOptions || [];
+    const allSelected = safeAllOptions.every(option => currentSelection.includes(option));
     
     setFormData(prev => ({
       ...prev,
-      [field]: allSelected ? [] : [...allOptions]
+      [field]: allSelected ? [] : [...safeAllOptions]
     }));
   };
 
