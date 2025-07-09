@@ -129,10 +129,10 @@ const Calculator = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
     // Clear error when user starts typing
     if (error) setError('');
@@ -145,6 +145,16 @@ const Calculator = () => {
       [field]: checked
         ? [...prev[field], value]
         : prev[field].filter(item => item !== value)
+    }));
+  };
+
+  const handleSelectAll = (field, allOptions) => {
+    const currentSelection = formData[field];
+    const allSelected = allOptions.every(option => currentSelection.includes(option));
+    
+    setFormData(prev => ({
+      ...prev,
+      [field]: allSelected ? [] : [...allOptions]
     }));
   };
 
