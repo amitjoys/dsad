@@ -611,7 +611,7 @@ const Calculator = () => {
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
-                  {availableLaborTypes.map(labor => (
+                  {(availableLaborTypes || []).map(labor => (
                     <label key={labor} className="flex items-center p-2 rounded hover:bg-gray-50 transition-colors duration-200">
                       <input
                         type="checkbox"
