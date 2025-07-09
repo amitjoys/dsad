@@ -621,8 +621,8 @@ async def calculate_granular_material_quantities(area: float, project_details: d
             "reinforcement": 0.5 # Reduced from 2
         },
         "bricks": {
-            "walls": 25,         # Reduced from 40
-            "partition": 15      # Reduced from 30
+            "walls": 15,         # Reduced from 25
+            "partition": 8       # Reduced from 15
         },
         "sand": {
             "foundation": 0.3,   # Reduced from 0.8
