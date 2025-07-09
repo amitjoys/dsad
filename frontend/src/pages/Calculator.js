@@ -201,7 +201,10 @@ const Calculator = () => {
       
       const response = await axios.post(`${backendUrl}/api/calculator/estimate`, {
         ...formData,
-        area: parseFloat(formData.area)
+        area: parseFloat(formData.area),
+        building_height: parseInt(formData.building_height),
+        parking_spaces: parseInt(formData.parking_spaces),
+        garden_area: parseFloat(formData.garden_area)
       });
 
       setResult(response.data);
