@@ -799,31 +799,31 @@ async def calculate_granular_material_quantities(area: float, project_details: d
     """Calculate detailed material quantities based on construction practices"""
     material_quantities = {}
     
-    # Detailed quantity calculations per sq ft
+    # Detailed quantity calculations per sq ft - OPTIMIZED for realistic consumption
     quantity_calculations = {
         "cement": {
-            "foundation": 0.8,  # bags per sq ft
-            "walls": 0.6,       # bags per sq ft
-            "plastering": 0.2,  # bags per sq ft
-            "flooring": 0.3     # bags per sq ft
+            "foundation": 0.5,  # bags per sq ft (reduced from 0.8)
+            "walls": 0.3,       # bags per sq ft (reduced from 0.6)
+            "plastering": 0.1,  # bags per sq ft (reduced from 0.2)
+            "flooring": 0.2     # bags per sq ft (reduced from 0.3)
         },
         "steel": {
-            "foundation": 8,    # kg per sq ft
-            "structure": 6,     # kg per sq ft
-            "reinforcement": 4   # kg per sq ft
+            "foundation": 4,    # kg per sq ft (reduced from 8)
+            "structure": 3,     # kg per sq ft (reduced from 6)
+            "reinforcement": 2   # kg per sq ft (reduced from 4)
         },
         "bricks": {
-            "walls": 55,        # pieces per sq ft (4.5" wall)
-            "partition": 40      # pieces per sq ft (3" wall)
+            "walls": 40,        # pieces per sq ft (reduced from 55)
+            "partition": 30      # pieces per sq ft (reduced from 40)
         },
         "sand": {
-            "foundation": 1.5,  # cft per sq ft
-            "plastering": 0.8,  # cft per sq ft
-            "flooring": 0.4     # cft per sq ft
+            "foundation": 0.8,  # cft per sq ft (reduced from 1.5)
+            "plastering": 0.5,  # cft per sq ft (reduced from 0.8)
+            "flooring": 0.3     # cft per sq ft (reduced from 0.4)
         },
         "aggregate": {
-            "foundation": 2.0,  # cft per sq ft
-            "concrete": 1.2     # cft per sq ft
+            "foundation": 1.0,  # cft per sq ft (reduced from 2.0)
+            "concrete": 0.8     # cft per sq ft (reduced from 1.2)
         }
     }
     
