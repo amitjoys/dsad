@@ -585,6 +585,8 @@ async def calculate_labor_costs(location: str, labor_types: List[str], area: flo
                 "skill_level": labor_info["skill_level"]
             }
     
+    return labor_costs
+    
 async def calculate_transportation_costs(location: str, area: float, materials: List[str], project_details: dict):
     """Calculate transportation costs for materials and equipment"""
     transportation_costs = {}
