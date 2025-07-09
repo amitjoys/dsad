@@ -456,28 +456,28 @@ async def calculate_additional_costs(location: str, area: float, project_details
     
     # Base rates for additional costs (2025 realistic pricing) - SIGNIFICANTLY REDUCED FOR REAL-WORLD PRICING
     base_additional_rates = {
-        "building_permit": 3,
-        "plan_approval": 2,
-        "structural_approval": 2,
-        "electrical_permit": 1,
-        "plumbing_permit": 1,
-        "fire_safety_approval": 1,
-        "environmental_clearance": 1,
-        "site_survey": 1,
-        "soil_testing": 1,
-        "architect_fees": 40,
-        "structural_engineer": 25,
-        "project_management": 20,
-        "insurance": 1,
-        "temporary_utilities": 2,
-        "safety_equipment": 2,
-        "tool_equipment_rental": 3,
-        "site_security": 1,
-        "quality_inspection": 1,
-        "final_inspection": 1,
-        "occupancy_certificate": 1,
-        "utility_connections": 5,
-        "contingency_fund": 10
+        "building_permit": 1.5,   # Reduced from 3
+        "plan_approval": 1,       # Reduced from 2
+        "structural_approval": 1,  # Reduced from 2
+        "electrical_permit": 0.5,  # Reduced from 1
+        "plumbing_permit": 0.5,    # Reduced from 1
+        "fire_safety_approval": 0.5,  # Reduced from 1
+        "environmental_clearance": 0.5, # Reduced from 1
+        "site_survey": 0.5,        # Reduced from 1
+        "soil_testing": 0.5,       # Reduced from 1
+        "architect_fees": 25,      # Reduced from 40
+        "structural_engineer": 15, # Reduced from 25
+        "project_management": 10,  # Reduced from 20
+        "insurance": 0.5,          # Reduced from 1
+        "temporary_utilities": 1,  # Reduced from 2
+        "safety_equipment": 1,     # Reduced from 2
+        "tool_equipment_rental": 1.5, # Reduced from 3
+        "site_security": 0.5,      # Reduced from 1
+        "quality_inspection": 0.5, # Reduced from 1
+        "final_inspection": 0.5,   # Reduced from 1
+        "occupancy_certificate": 0.5, # Reduced from 1
+        "utility_connections": 3,  # Reduced from 5
+        "contingency_fund": 5      # Reduced from 10
     }
     
     # Location-based multipliers for additional costs
