@@ -437,13 +437,13 @@ async def scrape_material_prices(location: str, materials: List[str]):
     
     # Updated realistic prices for 2025 (in INR) - OPTIMIZED FOR REALISTIC PRICING
     base_prices = {
-        # Basic Materials - REDUCED PRICES
-        "cement": {"price": 350, "unit": "per bag (50kg)", "location": location, "waste_factor": 0.05},
-        "steel": {"price": 65, "unit": "per kg", "location": location, "waste_factor": 0.03},
-        "bricks": {"price": 8, "unit": "per piece", "location": location, "waste_factor": 0.05},
-        "sand": {"price": 28, "unit": "per cft", "location": location, "waste_factor": 0.10},
-        "aggregate": {"price": 32, "unit": "per cft", "location": location, "waste_factor": 0.08},
-        "concrete_blocks": {"price": 20, "unit": "per piece", "location": location, "waste_factor": 0.03},
+        # Basic Materials - FURTHER REDUCED FOR TARGET PRICING
+        "cement": {"price": 320, "unit": "per bag (50kg)", "location": location, "waste_factor": 0.05},
+        "steel": {"price": 58, "unit": "per kg", "location": location, "waste_factor": 0.03},
+        "bricks": {"price": 7, "unit": "per piece", "location": location, "waste_factor": 0.05},
+        "sand": {"price": 25, "unit": "per cft", "location": location, "waste_factor": 0.10},
+        "aggregate": {"price": 28, "unit": "per cft", "location": location, "waste_factor": 0.08},
+        "concrete_blocks": {"price": 18, "unit": "per piece", "location": location, "waste_factor": 0.03},
         
         # Flooring Materials - REDUCED PRICES
         "tiles": {"price": 40, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
