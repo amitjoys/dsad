@@ -274,11 +274,11 @@ const Calculator = () => {
               Project Details
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* Project Type */}
               <div>
                 <label className="form-label">Project Type</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {projectTypes.map(type => (
                     <label key={type.value} className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 hover:border-primary-300 transition-all duration-200">
                       <input
@@ -296,54 +296,285 @@ const Calculator = () => {
                 </div>
               </div>
 
-              {/* Area */}
-              <div>
-                <label className="form-label">Area (Square Feet)</label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="area"
-                    value={formData.area}
-                    onChange={handleInputChange}
-                    className="calculator-input pr-12"
-                    placeholder="Enter area in sq ft"
-                    required
-                    min="100"
-                    max="50000"
-                    step="1"
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 text-sm">sq ft</span>
+              {/* Basic Project Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Area */}
+                <div>
+                  <label className="form-label">Area (Square Feet)</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      name="area"
+                      value={formData.area}
+                      onChange={handleInputChange}
+                      className="calculator-input pr-12"
+                      placeholder="Enter area in sq ft"
+                      required
+                      min="100"
+                      max="50000"
+                      step="1"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 text-sm">sq ft</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Minimum: 100 sq ft, Maximum: 50,000 sq ft</p>
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className="form-label">Location</label>
+                  <div className="relative">
+                    <select
+                      name="location"
+                      value={formData.location}
+                      onChange={handleInputChange}
+                      className="calculator-select pr-10"
+                      required
+                    >
+                      {locations.map(location => (
+                        <option key={location.toLowerCase().replace(/\s+/g, '_')} value={location.toLowerCase().replace(/\s+/g, '_')}>
+                          {location}
+                        </option>
+                      ))}
+                    </select>
+                    <MapPinIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Minimum: 100 sq ft, Maximum: 50,000 sq ft</p>
               </div>
 
-              {/* Location */}
-              <div>
-                <label className="form-label">Location</label>
-                <div className="relative">
-                  <select
-                    name="location"
-                    value={formData.location}
+              {/* Building Specifications */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Building Height */}
+                <div>
+                  <label className="form-label">Building Height (Floors)</label>
+                  <input
+                    type="number"
+                    name="building_height"
+                    value={formData.building_height}
                     onChange={handleInputChange}
-                    className="calculator-select pr-10"
+                    className="calculator-input"
+                    min="1"
+                    max="10"
                     required
-                  >
-                    {locations.map(location => (
-                      <option key={location.toLowerCase()} value={location.toLowerCase()}>
-                        {location}
-                      </option>
+                  />
+                </div>
+
+                {/* Parking Spaces */}
+                <div>
+                  <label className="form-label">Parking Spaces</label>
+                  <input
+                    type="number"
+                    name="parking_spaces"
+                    value={formData.parking_spaces}
+                    onChange={handleInputChange}
+                    className="calculator-input"
+                    min="0"
+                    max="20"
+                  />
+                </div>
+
+                {/* Garden Area */}
+                <div>
+                  <label className="form-label">Garden Area (sq ft)</label>
+                  <input
+                    type="number"
+                    name="garden_area"
+                    value={formData.garden_area}
+                    onChange={handleInputChange}
+                    className="calculator-input"
+                    min="0"
+                    step="0.1"
+                  />
+                </div>
+              </div>
+
+              {/* Foundation Type */}
+              <div>
+                <label className="form-label">Foundation Type</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {foundationTypes.map(type => (
+                    <label key={type.value} className={`flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      formData.foundation_type === type.value 
+                        ? 'border-primary-500 bg-primary-50' 
+                        : 'bg-white border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="foundation_type"
+                        value={type.value}
+                        checked={formData.foundation_type === type.value}
+                        onChange={handleInputChange}
+                        className="mt-1 mr-3 text-primary-600 focus:ring-primary-500"
+                      />
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-800 mb-1">{type.label}</div>
+                        <div className="text-sm text-gray-600">{type.description}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Roof Type */}
+              <div>
+                <label className="form-label">Roof Type</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {roofTypes.map(type => (
+                    <label key={type.value} className={`flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      formData.roof_type === type.value 
+                        ? 'border-primary-500 bg-primary-50' 
+                        : 'bg-white border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="roof_type"
+                        value={type.value}
+                        checked={formData.roof_type === type.value}
+                        onChange={handleInputChange}
+                        className="mt-1 mr-3 text-primary-600 focus:ring-primary-500"
+                      />
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-800 mb-1">{type.label}</div>
+                        <div className="text-sm text-gray-600">{type.description}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Wall Type */}
+              <div>
+                <label className="form-label">Wall Type</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {wallTypes.map(type => (
+                    <label key={type.value} className={`flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      formData.wall_type === type.value 
+                        ? 'border-primary-500 bg-primary-50' 
+                        : 'bg-white border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="wall_type"
+                        value={type.value}
+                        checked={formData.wall_type === type.value}
+                        onChange={handleInputChange}
+                        className="mt-1 mr-3 text-primary-600 focus:ring-primary-500"
+                      />
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-800 mb-1">{type.label}</div>
+                        <div className="text-sm text-gray-600">{type.description}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Electrical and Plumbing Complexity */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="form-label">Electrical Complexity</label>
+                  <div className="space-y-2">
+                    {complexityLevels.filter(level => ['basic', 'advanced', 'smart_home'].includes(level.value)).map(level => (
+                      <label key={level.value} className={`flex items-start p-3 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                        formData.electrical_complexity === level.value 
+                          ? 'border-primary-500 bg-primary-50' 
+                          : 'bg-white border-gray-200 hover:border-gray-300'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="electrical_complexity"
+                          value={level.value}
+                          checked={formData.electrical_complexity === level.value}
+                          onChange={handleInputChange}
+                          className="mt-1 mr-3 text-primary-600 focus:ring-primary-500"
+                        />
+                        <div className="flex-1">
+                          <div className="font-semibold text-gray-800 mb-1">{level.label}</div>
+                          <div className="text-sm text-gray-600">{level.description}</div>
+                        </div>
+                      </label>
                     ))}
-                  </select>
-                  <MapPinIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="form-label">Plumbing Complexity</label>
+                  <div className="space-y-2">
+                    {complexityLevels.filter(level => ['basic', 'premium', 'luxury'].includes(level.value)).map(level => (
+                      <label key={level.value} className={`flex items-start p-3 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                        formData.plumbing_complexity === level.value 
+                          ? 'border-primary-500 bg-primary-50' 
+                          : 'bg-white border-gray-200 hover:border-gray-300'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="plumbing_complexity"
+                          value={level.value}
+                          checked={formData.plumbing_complexity === level.value}
+                          onChange={handleInputChange}
+                          className="mt-1 mr-3 text-primary-600 focus:ring-primary-500"
+                        />
+                        <div className="flex-1">
+                          <div className="font-semibold text-gray-800 mb-1">{level.label}</div>
+                          <div className="text-sm text-gray-600">{level.description}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Options */}
+              <div>
+                <label className="form-label">Additional Options</label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="checkbox"
+                      name="site_preparation"
+                      checked={formData.site_preparation}
+                      onChange={handleInputChange}
+                      className="mr-3 text-primary-600 focus:ring-primary-500 rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Site Preparation</span>
+                  </label>
+                  <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="checkbox"
+                      name="include_permits"
+                      checked={formData.include_permits}
+                      onChange={handleInputChange}
+                      className="mr-3 text-primary-600 focus:ring-primary-500 rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Include Permits</span>
+                  </label>
+                  <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="checkbox"
+                      name="include_transportation"
+                      checked={formData.include_transportation}
+                      onChange={handleInputChange}
+                      className="mr-3 text-primary-600 focus:ring-primary-500 rounded"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Include Transportation</span>
+                  </label>
                 </div>
               </div>
 
               {/* Materials */}
               <div>
-                <label className="form-label">Materials Required</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="form-label mb-0">Materials Required</label>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectAll('materials', availableMaterials)}
+                    className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 border border-primary-200 rounded-lg hover:bg-primary-100 transition-colors"
+                  >
+                    {availableMaterials.every(material => formData.materials.includes(material)) ? 'Deselect All' : 'Select All'}
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
                   {availableMaterials.map(material => (
                     <label key={material} className="flex items-center p-2 rounded hover:bg-gray-50 transition-colors duration-200">
                       <input
@@ -353,17 +584,28 @@ const Calculator = () => {
                         onChange={(e) => handleCheckboxChange(e, 'materials')}
                         className="mr-3 text-primary-600 focus:ring-primary-500 rounded"
                       />
-                      <span className="text-sm capitalize text-gray-700">{material}</span>
+                      <span className="text-sm capitalize text-gray-700">{material.replace(/_/g, ' ')}</span>
                     </label>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Select all materials you'll need for your project</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  {formData.materials.length} of {availableMaterials.length} materials selected
+                </p>
               </div>
 
               {/* Labor Types */}
               <div>
-                <label className="form-label">Labor Types Required</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="form-label mb-0">Labor Types Required</label>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectAll('labor_types', availableLaborTypes)}
+                    className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 border border-primary-200 rounded-lg hover:bg-primary-100 transition-colors"
+                  >
+                    {availableLaborTypes.every(labor => formData.labor_types.includes(labor)) ? 'Deselect All' : 'Select All'}
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
                   {availableLaborTypes.map(labor => (
                     <label key={labor} className="flex items-center p-2 rounded hover:bg-gray-50 transition-colors duration-200">
                       <input
@@ -373,11 +615,13 @@ const Calculator = () => {
                         onChange={(e) => handleCheckboxChange(e, 'labor_types')}
                         className="mr-3 text-primary-600 focus:ring-primary-500 rounded"
                       />
-                      <span className="text-sm capitalize text-gray-700">{labor.replace('_', ' ')}</span>
+                      <span className="text-sm capitalize text-gray-700">{labor.replace(/_/g, ' ')}</span>
                     </label>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Select all labor types required for your project</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  {formData.labor_types.length} of {availableLaborTypes.length} labor types selected
+                </p>
               </div>
 
               {/* Quality Level */}
