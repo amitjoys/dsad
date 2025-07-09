@@ -9,9 +9,9 @@ from auth import (
     get_password_hash, 
     create_access_token, 
     get_current_user, 
-    get_current_admin,
-    ACCESS_TOKEN_EXPIRE_MINUTES
+    get_current_admin
 )
+from config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
 
