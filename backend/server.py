@@ -445,12 +445,12 @@ async def scrape_material_prices(location: str, materials: List[str]):
         "aggregate": {"price": 28, "unit": "per cft", "location": location, "waste_factor": 0.08},
         "concrete_blocks": {"price": 18, "unit": "per piece", "location": location, "waste_factor": 0.03},
         
-        # Flooring Materials - REDUCED PRICES
-        "tiles": {"price": 40, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
-        "marble": {"price": 120, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
-        "granite": {"price": 90, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
-        "ceramic_tiles": {"price": 25, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
-        "vitrified_tiles": {"price": 60, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
+        # Flooring Materials - FURTHER REDUCED FOR TARGET PRICING
+        "tiles": {"price": 35, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
+        "marble": {"price": 100, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
+        "granite": {"price": 80, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
+        "ceramic_tiles": {"price": 22, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
+        "vitrified_tiles": {"price": 50, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
         
         # Finishing Materials - REDUCED PRICES
         "paint": {"price": 140, "unit": "per litre", "location": location, "waste_factor": 0.05},
