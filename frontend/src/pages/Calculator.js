@@ -20,7 +20,20 @@ const Calculator = () => {
     location: 'pune',
     materials: [],
     labor_types: [],
-    quality_level: 'standard'
+    quality_level: 'standard',
+    foundation_type: 'slab',
+    roof_type: 'flat',
+    wall_type: 'brick',
+    electrical_complexity: 'basic',
+    plumbing_complexity: 'basic',
+    flooring_type: 'basic',
+    finishing_level: 'standard',
+    site_preparation: true,
+    include_permits: true,
+    include_transportation: true,
+    building_height: 1,
+    parking_spaces: 0,
+    garden_area: 0.0
   });
 
   const [result, setResult] = useState(null);
