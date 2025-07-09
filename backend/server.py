@@ -435,54 +435,54 @@ async def scrape_material_prices(location: str, materials: List[str]):
     """Enhanced material prices with more realistic 2025 pricing"""
     prices = {}
     
-    # Updated realistic prices for 2025 (in INR)
+    # Updated realistic prices for 2025 (in INR) - OPTIMIZED FOR REALISTIC PRICING
     base_prices = {
-        # Basic Materials
-        "cement": {"price": 420, "unit": "per bag (50kg)", "location": location, "waste_factor": 0.05},
-        "steel": {"price": 78, "unit": "per kg", "location": location, "waste_factor": 0.03},
-        "bricks": {"price": 12, "unit": "per piece", "location": location, "waste_factor": 0.05},
-        "sand": {"price": 35, "unit": "per cft", "location": location, "waste_factor": 0.10},
-        "aggregate": {"price": 40, "unit": "per cft", "location": location, "waste_factor": 0.08},
-        "concrete_blocks": {"price": 25, "unit": "per piece", "location": location, "waste_factor": 0.03},
+        # Basic Materials - REDUCED PRICES
+        "cement": {"price": 350, "unit": "per bag (50kg)", "location": location, "waste_factor": 0.05},
+        "steel": {"price": 65, "unit": "per kg", "location": location, "waste_factor": 0.03},
+        "bricks": {"price": 8, "unit": "per piece", "location": location, "waste_factor": 0.05},
+        "sand": {"price": 28, "unit": "per cft", "location": location, "waste_factor": 0.10},
+        "aggregate": {"price": 32, "unit": "per cft", "location": location, "waste_factor": 0.08},
+        "concrete_blocks": {"price": 20, "unit": "per piece", "location": location, "waste_factor": 0.03},
         
-        # Flooring Materials
-        "tiles": {"price": 55, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
-        "marble": {"price": 180, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
-        "granite": {"price": 120, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
-        "ceramic_tiles": {"price": 35, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
-        "vitrified_tiles": {"price": 85, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
+        # Flooring Materials - REDUCED PRICES
+        "tiles": {"price": 40, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
+        "marble": {"price": 120, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
+        "granite": {"price": 90, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
+        "ceramic_tiles": {"price": 25, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
+        "vitrified_tiles": {"price": 60, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
         
-        # Finishing Materials
-        "paint": {"price": 180, "unit": "per litre", "location": location, "waste_factor": 0.05},
-        "putty": {"price": 25, "unit": "per kg", "location": location, "waste_factor": 0.08},
-        "primer": {"price": 150, "unit": "per litre", "location": location, "waste_factor": 0.05},
+        # Finishing Materials - REDUCED PRICES
+        "paint": {"price": 140, "unit": "per litre", "location": location, "waste_factor": 0.05},
+        "putty": {"price": 18, "unit": "per kg", "location": location, "waste_factor": 0.08},
+        "primer": {"price": 120, "unit": "per litre", "location": location, "waste_factor": 0.05},
         
-        # Structural Materials
-        "wood": {"price": 65, "unit": "per sq ft", "location": location, "waste_factor": 0.15},
-        "glass": {"price": 120, "unit": "per sq ft", "location": location, "waste_factor": 0.05},
-        "aluminum": {"price": 250, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
-        "ms_sections": {"price": 85, "unit": "per kg", "location": location, "waste_factor": 0.05},
+        # Structural Materials - REDUCED PRICES
+        "wood": {"price": 50, "unit": "per sq ft", "location": location, "waste_factor": 0.15},
+        "glass": {"price": 85, "unit": "per sq ft", "location": location, "waste_factor": 0.05},
+        "aluminum": {"price": 180, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
+        "ms_sections": {"price": 70, "unit": "per kg", "location": location, "waste_factor": 0.05},
         
-        # Electrical Materials
-        "electrical_wire": {"price": 45, "unit": "per meter", "location": location, "waste_factor": 0.10},
-        "electrical_fittings": {"price": 200, "unit": "per point", "location": location, "waste_factor": 0.05},
-        "switches_sockets": {"price": 150, "unit": "per point", "location": location, "waste_factor": 0.02},
-        "mcb_db": {"price": 2500, "unit": "per unit", "location": location, "waste_factor": 0.00},
+        # Electrical Materials - REDUCED PRICES
+        "electrical_wire": {"price": 35, "unit": "per meter", "location": location, "waste_factor": 0.10},
+        "electrical_fittings": {"price": 150, "unit": "per point", "location": location, "waste_factor": 0.05},
+        "switches_sockets": {"price": 120, "unit": "per point", "location": location, "waste_factor": 0.02},
+        "mcb_db": {"price": 2000, "unit": "per unit", "location": location, "waste_factor": 0.00},
         
-        # Plumbing Materials
-        "pvc_pipes": {"price": 85, "unit": "per meter", "location": location, "waste_factor": 0.10},
-        "cp_fittings": {"price": 3500, "unit": "per set", "location": location, "waste_factor": 0.05},
-        "sanitary_ware": {"price": 8500, "unit": "per set", "location": location, "waste_factor": 0.02},
-        "water_tank": {"price": 12000, "unit": "per unit", "location": location, "waste_factor": 0.00},
+        # Plumbing Materials - REDUCED PRICES
+        "pvc_pipes": {"price": 65, "unit": "per meter", "location": location, "waste_factor": 0.10},
+        "cp_fittings": {"price": 2500, "unit": "per set", "location": location, "waste_factor": 0.05},
+        "sanitary_ware": {"price": 6000, "unit": "per set", "location": location, "waste_factor": 0.02},
+        "water_tank": {"price": 8000, "unit": "per unit", "location": location, "waste_factor": 0.00},
         
-        # Roofing Materials
-        "roofing_tiles": {"price": 45, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
-        "waterproofing": {"price": 35, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
-        "insulation": {"price": 25, "unit": "per sq ft", "location": location, "waste_factor": 0.05},
+        # Roofing Materials - REDUCED PRICES
+        "roofing_tiles": {"price": 35, "unit": "per sq ft", "location": location, "waste_factor": 0.10},
+        "waterproofing": {"price": 28, "unit": "per sq ft", "location": location, "waste_factor": 0.08},
+        "insulation": {"price": 18, "unit": "per sq ft", "location": location, "waste_factor": 0.05},
         
-        # Others
-        "hardware": {"price": 150, "unit": "per sq ft", "location": location, "waste_factor": 0.05},
-        "adhesives": {"price": 25, "unit": "per sq ft", "location": location, "waste_factor": 0.10}
+        # Others - REDUCED PRICES
+        "hardware": {"price": 100, "unit": "per sq ft", "location": location, "waste_factor": 0.05},
+        "adhesives": {"price": 18, "unit": "per sq ft", "location": location, "waste_factor": 0.10}
     }
     
     # Enhanced location-based price adjustments (2025 realistic multipliers)
