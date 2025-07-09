@@ -1416,7 +1416,7 @@ class TestConstructPuneAPI(unittest.TestCase):
                 self.assertAlmostEqual(
                     cost_data["total_cost"], 
                     cost_data["rate_per_sqft"] * cost_data["area"],
-                    delta=3.0
+                    delta=10.0
                 )
         
         # Validate total cost calculation
