@@ -693,8 +693,14 @@ const Calculator = () => {
                     <div className="text-4xl lg:text-5xl font-bold text-primary-700 mb-4">
                       {formatCurrency(result.total_cost)}
                     </div>
-                    <p className="body-sm text-gray-600">
+                    <div className="text-lg text-primary-600 mb-2">
+                      {formatCurrency(result.breakdown.cost_per_sqft)} per sq ft
+                    </div>
+                    <p className="body-sm text-gray-600 mb-2">
                       For {formData.area} sq ft {formData.project_type} in {formData.location}
+                    </p>
+                    <p className="body-sm text-gray-500">
+                      Estimated Timeline: {result.breakdown.estimated_timeline_months} months
                     </p>
                   </div>
                 </div>
@@ -715,17 +721,70 @@ const Calculator = () => {
                       <span className="font-medium">Labor Cost</span>
                       <span className="font-semibold">{formatCurrency(result.breakdown.labor_subtotal)}</span>
                     </div>
+                    {result.breakdown.transportation_subtotal > 0 && (
+                      <div className="cost-item">
+                        <span className="font-medium">Transportation Cost</span>
+                        <span className="font-semibold">{formatCurrency(result.breakdown.transportation_subtotal)}</span>
+                      </div>
+                    )}
+                    <div className="cost-item">
+                      <span className="font-medium">Additional Costs (Permits, etc.)</span>
+                      <span className="font-semibold">{formatCurrency(result.breakdown.additional_costs_subtotal)}</span>
+                    </div>
                     <div className="cost-item">
                       <span className="font-medium">Quality Level ({result.breakdown.quality_level})</span>
                       <span className="font-semibold">{result.breakdown.quality_multiplier}x</span>
                     </div>
                     <div className="cost-item">
-                      <span className="font-medium">Overhead & Profit</span>
+                      <span className="font-medium">Overhead & Profit ({(result.breakdown.overhead_rate * 100).toFixed(0)}%)</span>
                       <span className="font-semibold">{formatCurrency(result.breakdown.overhead_profit)}</span>
                     </div>
                     <div className="cost-item border-t-2 border-primary-200 pt-3">
                       <span className="font-bold text-lg">Total Cost</span>
                       <span className="cost-total">{formatCurrency(result.total_cost)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Project Details */}
+                <div className="cost-breakdown">
+                  <h4 className="heading-sm mb-4">Project Specifications</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Foundation Type:</span>
+                        <span className="text-sm font-medium capitalize">{result.breakdown.project_details.foundation_type.replace('_', ' ')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Roof Type:</span>
+                        <span className="text-sm font-medium capitalize">{result.breakdown.project_details.roof_type}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Wall Type:</span>
+                        <span className="text-sm font-medium capitalize">{result.breakdown.project_details.wall_type.replace('_', ' ')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Building Height:</span>
+                        <span className="text-sm font-medium">{result.breakdown.project_details.building_height} floor(s)</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Electrical:</span>
+                        <span className="text-sm font-medium capitalize">{result.breakdown.project_details.electrical_complexity.replace('_', ' ')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Plumbing:</span>
+                        <span className="text-sm font-medium capitalize">{result.breakdown.project_details.plumbing_complexity}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Parking Spaces:</span>
+                        <span className="text-sm font-medium">{result.breakdown.project_details.parking_spaces}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Garden Area:</span>
+                        <span className="text-sm font-medium">{result.breakdown.project_details.garden_area} sq ft</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -736,7 +795,17 @@ const Calculator = () => {
                   <div className="space-y-2">
                     {Object.entries(result.material_costs).map(([material, cost]) => (
                       <div key={material} className="cost-item">
-                        <span className="capitalize font-medium">{material}</span>
+                        <div className="flex flex-col">
+                          <span className="capitalize font-medium">{material.replace(/_/g, ' ')}</span>
+                          <span className="text-xs text-gray-500">
+                            {cost.adjusted_quantity} {cost.unit} × {formatCurrency(cost.unit_price)}
+                            {cost.waste_factor > 0 && (
+                              <span className="ml-1 text-orange-600">
+                                (+{(cost.waste_factor * 100).toFixed(0)}% waste)
+                              </span>
+                            )}
+                          </span>
+                        </div>
                         <span className="font-semibold">{formatCurrency(cost.total_cost)}</span>
                       </div>
                     ))}
@@ -749,7 +818,55 @@ const Calculator = () => {
                   <div className="space-y-2">
                     {Object.entries(result.labor_costs).map(([labor, cost]) => (
                       <div key={labor} className="cost-item">
-                        <span className="capitalize font-medium">{labor.replace('_', ' ')}</span>
+                        <div className="flex flex-col">
+                          <span className="capitalize font-medium">{labor.replace(/_/g, ' ')}</span>
+                          <span className="text-xs text-gray-500">
+                            {formatCurrency(cost.effective_rate)} per sq ft × {cost.area} sq ft
+                            {cost.productivity_factor !== 1 && (
+                              <span className="ml-1 text-blue-600">
+                                (productivity: {cost.productivity_factor}x)
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        <span className="font-semibold">{formatCurrency(cost.total_cost)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Transportation Costs */}
+                {result.breakdown.transportation_costs && Object.keys(result.breakdown.transportation_costs).length > 0 && (
+                  <div className="cost-breakdown">
+                    <h4 className="heading-sm mb-4">Transportation Costs</h4>
+                    <div className="space-y-2">
+                      {Object.entries(result.breakdown.transportation_costs).map(([transport, cost]) => (
+                        <div key={transport} className="cost-item">
+                          <div className="flex flex-col">
+                            <span className="capitalize font-medium">{transport.replace(/_/g, ' ')}</span>
+                            <span className="text-xs text-gray-500">
+                              {formatCurrency(cost.rate_per_sqft)} per sq ft × {cost.area} sq ft
+                            </span>
+                          </div>
+                          <span className="font-semibold">{formatCurrency(cost.total_cost)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Additional Costs */}
+                <div className="cost-breakdown">
+                  <h4 className="heading-sm mb-4">Additional Costs</h4>
+                  <div className="space-y-2">
+                    {Object.entries(result.breakdown.additional_costs).map(([additional, cost]) => (
+                      <div key={additional} className="cost-item">
+                        <div className="flex flex-col">
+                          <span className="capitalize font-medium">{additional.replace(/_/g, ' ')}</span>
+                          <span className="text-xs text-gray-500">
+                            {formatCurrency(cost.rate_per_sqft)} per sq ft × {cost.area} sq ft
+                          </span>
+                        </div>
                         <span className="font-semibold">{formatCurrency(cost.total_cost)}</span>
                       </div>
                     ))}
